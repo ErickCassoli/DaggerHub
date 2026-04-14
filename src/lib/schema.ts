@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { ABILITY_KIND_VALUES, TIPO_VALUES } from '@/types/adversary';
 
-/** Formato aceito: "1d8+2 fís", "2d6 mág", "3d10-1 fís". */
-export const danoRegex = /^\d+d\d+([+-]\d+)?\s+(fís|mág)$/i;
+/** Formato aceito: "1d8+2 fís", "2d6 mág", "3d10-1 fís". Dano fixo também: "7 fís". */
+export const danoRegex = /^(\d+(d\d+)?([+-]\d+)?)\s+(fís|mág)$/i;
 
 export const attackSchema = z.object({
   id: z.string(),
@@ -24,6 +24,14 @@ export const abilitySchema = z.object({
   descricao: z.string().min(1, 'Obrigatório'),
 });
 
+/** Aceita number, null, ou string vazia (convertida em null). */
+const limiarSchema = z
+  .union([z.coerce.number().int().min(1).max(999), z.literal('').transform(() => null), z.null()])
+  .nullable();
+
+/** Formato: "1/PV", "2/PV", "10/PV". */
+const hordaRatioRegex = /^\d+\/PV$/;
+
 export const adversarySchema = z
   .object({
     id: z.string(),
@@ -33,21 +41,29 @@ export const adversarySchema = z
     descricao: z.string().max(240).default(''),
     motivacoes: z.array(z.string().min(1)).min(1, 'Inclua ao menos 1 motivação'),
     dificuldade: z.coerce.number().int().min(1).max(30),
-    limiarMaior: z.coerce.number().int().min(1),
-    limiarGrave: z.coerce.number().int().min(1),
+    limiarMaior: limiarSchema,
+    limiarGrave: limiarSchema,
     pv: z.coerce.number().int().min(0).max(30),
     pf: z.coerce.number().int().min(0).max(20),
     atq: z.coerce.number().int().min(-5).max(15),
+    hordaRatio: z
+      .string()
+      .regex(hordaRatioRegex, 'Formato esperado: 1/PV')
+      .optional()
+      .or(z.literal('').transform(() => undefined)),
     ataques: z.array(attackSchema).min(1, 'Inclua ao menos 1 ataque'),
     experiencias: z.array(experienceSchema),
     habilidades: z.array(abilitySchema),
     criadoEm: z.string(),
     atualizadoEm: z.string(),
   })
-  .refine((d) => d.limiarGrave > d.limiarMaior, {
-    path: ['limiarGrave'],
-    message: 'Grave deve ser maior que Maior',
-  });
+  .refine(
+    (d) => d.limiarMaior == null || d.limiarGrave == null || d.limiarGrave > d.limiarMaior,
+    {
+      path: ['limiarGrave'],
+      message: 'Grave deve ser maior que Maior',
+    },
+  );
 
 export type AdversaryInput = z.input<typeof adversarySchema>;
 export type AdversaryParsed = z.output<typeof adversarySchema>;

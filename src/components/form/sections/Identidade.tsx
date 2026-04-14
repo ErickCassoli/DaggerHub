@@ -12,6 +12,7 @@ import { FieldError } from '../FieldError';
 export function Identidade() {
   const form = useFormContext<Adversary>();
   const errors = form.formState.errors;
+  const tipo = form.watch('tipo');
 
   return (
     <Section title="Identidade" subtitle="Nome, papel e descrição breve">
@@ -54,6 +55,20 @@ export function Identidade() {
           </Select>
           <FieldError message={errors.patamar?.message} />
         </div>
+
+        {tipo === 'horda' ? (
+          <div className="md:col-span-2">
+            <label className="field-label" htmlFor="hordaRatio">
+              Razão de criaturas por PV (ex.: 1/PV, 2/PV)
+            </label>
+            <Input
+              id="hordaRatio"
+              {...form.register('hordaRatio')}
+              placeholder="2/PV"
+            />
+            <FieldError message={errors.hordaRatio?.message} />
+          </div>
+        ) : null}
 
         <div className="md:col-span-2">
           <label className="field-label" htmlFor="descricao">

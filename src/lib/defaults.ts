@@ -16,7 +16,7 @@ export function blankAbility(): Ability {
 
 export function blankAdversary(): Adversary {
   const now = new Date().toISOString();
-  const tipo: Tipo = 'padrao';
+  const tipo: Tipo = 'comum';
   const patamar: Patamar = 1;
   const base = getBaseline(patamar, tipo);
   return {
