@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color-scheme: light;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #efe7d5;
+  color: #2b1a1a;
+}
+
+@layer components {
+  .field-label {
+    @apply text-xs font-semibold uppercase tracking-wider text-ink/70;
+  }
+}
