@@ -17,7 +17,6 @@ async function nodeToPng(node: HTMLElement): Promise<{ dataUrl: string; width: n
   const dataUrl = await toPng(node, {
     pixelRatio: 2,
     cacheBust: true,
-    backgroundColor: '#f4e9d8',
   });
   return { dataUrl, width: node.offsetWidth, height: node.offsetHeight };
 }
