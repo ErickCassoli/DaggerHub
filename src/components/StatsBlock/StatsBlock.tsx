@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, Fragment } from 'react';
 import type { Adversary } from '@/types/adversary';
 import { PATAMAR_LABEL } from '@/data/patamares';
 import { TIPO_LABEL } from '@/data/tipos';
@@ -45,88 +45,88 @@ export const StatsBlock = forwardRef<HTMLDivElement, StatsBlockProps>(function S
   return (
     <div
       ref={ref}
-      className="w-[340px] border border-ink/40 bg-parchment text-ink shadow-md"
-      style={{ fontFamily: '"Cormorant Garamond", Georgia, serif' }}
+      className="w-[450px] rounded-[12px] border border-[#d1c8b4] bg-[#f4efdf] p-[15px] text-[#1a1a1a] shadow-[2px_2px_10px_rgba(0,0,0,0.1)]"
+      style={{ fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif' }}
     >
-      {/* Barra escura com o nome */}
-      <div className="bg-ink px-3 py-1 text-parchment">
-        <h1 className="font-display text-[20px] font-bold uppercase tracking-[0.06em] leading-[1.15]">
+      <header>
+        <h1 className="m-0 text-[1.4rem] font-black uppercase leading-[1.15] tracking-[-0.5px] text-[#1a1a1a]">
           {nome || 'Nome da adversária'}
         </h1>
-      </div>
-
-      {/* Corpo compacto */}
-      <div className="px-3 py-1.5 space-y-0.5 text-[11.5px] leading-[1.3]">
-        {/* Subtítulo: Tipo (patamar) — tipo em bold */}
-        <p>
-          <strong>{TIPO_LABEL[tipo]}</strong> ({PATAMAR_LABEL[patamar]})
+        <p className="my-[2px] text-[0.95rem] font-bold italic">
+          {TIPO_LABEL[tipo]} ({PATAMAR_LABEL[patamar]})
         </p>
-
-        {/* Descrição em italic */}
-        {descricao ? <p className="italic">{descricao}</p> : null}
-
-        {/* Motivações */}
-        <p>
-          <strong>Motivações e táticas:</strong>{' '}
+        {descricao ? (
+          <p className="my-[5px] text-[0.9rem] italic">{descricao}</p>
+        ) : null}
+        <p className="mt-[5px] mb-[10px] text-[0.9rem]">
+          <strong className="font-extrabold">Motivações e táticas:</strong>{' '}
           {motivacoes.length ? motivacoes.join(', ') : '—'}
         </p>
+      </header>
 
-        {/* Stats inline com pipe */}
-        <p>
-          <strong>Dificuldade:</strong> {dificuldade}
-          <Sep />
-          <strong>Limiares:</strong> {limiarMaior}/{limiarGrave}
-          <Sep />
-          {pv} <strong>PV</strong>
-          <Sep />
-          {pf} <strong>PF</strong>
-        </p>
+      <section className="mb-[15px] overflow-hidden rounded border border-[#d1c8b4] bg-white">
+        <div className="flex flex-wrap gap-[10px] border-b border-dotted border-[#d1c8b4] px-[10px] py-[6px] text-[0.9rem]">
+          <span>
+            <strong className="font-extrabold">Dificuldade:</strong> {dificuldade}
+          </span>
+          <span>
+            <strong className="font-extrabold">Limiares:</strong> {limiarMaior}/{limiarGrave}
+          </span>
+          <span>
+            <strong className="font-extrabold">{pv} PV</strong>
+          </span>
+          <span>
+            <strong className="font-extrabold">{pf} PF</strong>
+          </span>
+        </div>
 
-        {/* ATQ + ataques inline */}
-        <p>
-          <strong>ATQ:</strong> {formatSigned(atq)}
+        <div
+          className={`flex flex-wrap gap-[10px] px-[10px] py-[6px] text-[0.9rem] ${
+            experiencias.length > 0
+              ? 'border-b border-dotted border-[#d1c8b4]'
+              : ''
+          }`}
+        >
+          <span>
+            <strong className="font-extrabold">ATQ:</strong> {formatSigned(atq)}
+          </span>
           {ataques.map((a) => (
-            <span key={a.id}>
-              <Sep />
-              <strong>{a.nome}:</strong> {a.alcance} | {a.dano}
-            </span>
-          ))}
-        </p>
-
-        {/* Experiência(s) */}
-        {experiencias.length > 0 ? (
-          <p>
-            <strong>{experienciaLabel}:</strong>{' '}
-            {experiencias.map((e, i) => (
-              <span key={e.id}>
-                {i > 0 ? ', ' : ''}
-                {e.nome} {formatBonus(e.bonus)}
+            <Fragment key={a.id}>
+              <span>
+                <strong className="font-extrabold">{a.nome}:</strong> {a.alcance}
               </span>
-            ))}
-          </p>
-        ) : null}
-      </div>
+              <span>{a.dano}</span>
+            </Fragment>
+          ))}
+        </div>
 
-      {/* Divisor + Habilidades */}
-      {habilidades.length > 0 ? (
-        <>
-          <div className="mx-3 h-px bg-ink/60" />
-          <div className="px-3 py-1.5">
-            <h2 className="font-display text-[11px] font-bold uppercase tracking-[0.2em] leading-none text-ink">
-              Habilidades
-            </h2>
-            <div className="mt-1 space-y-0.5">
-              {habilidades.map((h) => (
-                <AbilityItem key={h.id} ability={h} />
+        {experiencias.length > 0 ? (
+          <div className="flex flex-wrap gap-[10px] px-[10px] py-[6px] text-[0.9rem]">
+            <span>
+              <strong className="font-extrabold">{experienciaLabel}:</strong>{' '}
+              {experiencias.map((e, i) => (
+                <span key={e.id}>
+                  {i > 0 ? ', ' : ''}
+                  {e.nome} {formatBonus(e.bonus)}
+                </span>
               ))}
-            </div>
+            </span>
           </div>
-        </>
+        ) : null}
+      </section>
+
+      {habilidades.length > 0 ? (
+        <section>
+          <h2 className="mb-[8px] block w-full border-b-2 border-[#1a1a1a] text-[1.1rem] font-bold text-[#1a1a1a]">
+            HABILIDADES
+          </h2>
+          <div>
+            {habilidades.map((h) => (
+              <AbilityItem key={h.id} ability={h} />
+            ))}
+          </div>
+        </section>
       ) : null}
     </div>
   );
 });
-
-function Sep() {
-  return <span className="mx-1 text-ink/60">|</span>;
-}

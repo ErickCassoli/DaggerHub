@@ -109,7 +109,7 @@ export function BuilderPage() {
         </p>
       ) : null}
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_470px]">
         <AdversaryForm form={form} onSubmit={onSubmit} />
 
         <aside className="lg:sticky lg:top-6 lg:self-start">
