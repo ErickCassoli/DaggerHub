@@ -43,3 +43,23 @@ src/
     ui/          Button, Input, Select, Textarea, Section, TagInput
   pages/         LibraryPage, BuilderPage
 ```
+
+## Deploy no GitHub Pages
+
+A aplicação é publicada automaticamente via **GitHub Actions** em
+`https://erickcassoli.github.io/DaggerHub/`.
+
+Para habilitar na primeira vez:
+
+1. No GitHub, vá em **Settings → Pages**.
+2. Em **Build and deployment → Source**, selecione **GitHub Actions**.
+3. Faça um push na branch `master` (ou dispare manualmente em **Actions →
+   Deploy to GitHub Pages → Run workflow**). O workflow builda com
+   `VITE_BASE=/DaggerHub/` e publica o conteúdo de `dist/`.
+
+Notas técnicas:
+
+- O roteamento usa `HashRouter` (URLs com `#/edit/:id`), o que dispensa o
+  hack do `404.html` exigido pelo `BrowserRouter` no Pages.
+- Para deploy em domínio custom (raiz do domínio), sobrescreva
+  `VITE_BASE=/` ao buildar.
