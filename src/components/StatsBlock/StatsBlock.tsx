@@ -35,12 +35,22 @@ export const StatsBlock = forwardRef<HTMLDivElement, StatsBlockProps>(function S
     pv,
     pf,
     atq,
+    hordaRatio,
     ataques,
     experiencias,
     habilidades,
   } = adversary;
 
   const experienciaLabel = experiencias.length === 1 ? 'Experiência' : 'Experiências';
+
+  const limiaresText =
+    limiarMaior == null && limiarGrave == null
+      ? 'Nenhum'
+      : `${limiarMaior ?? 'Nenhum'}/${limiarGrave ?? 'Nenhum'}`;
+
+  const tipoLinha = tipo === 'horda' && hordaRatio
+    ? `${TIPO_LABEL[tipo]} (${PATAMAR_LABEL[patamar]}) (${hordaRatio})`
+    : `${TIPO_LABEL[tipo]} (${PATAMAR_LABEL[patamar]})`;
 
   return (
     <div
@@ -53,7 +63,7 @@ export const StatsBlock = forwardRef<HTMLDivElement, StatsBlockProps>(function S
           {nome || 'Nome da adversária'}
         </h1>
         <p className="my-[2px] text-[0.95rem] font-bold italic">
-          {TIPO_LABEL[tipo]} ({PATAMAR_LABEL[patamar]})
+          {tipoLinha}
         </p>
         {descricao ? (
           <p className="my-[5px] text-[0.9rem] italic">{descricao}</p>
@@ -70,7 +80,7 @@ export const StatsBlock = forwardRef<HTMLDivElement, StatsBlockProps>(function S
             <strong className="font-extrabold">Dificuldade:</strong> {dificuldade}
           </span>
           <span>
-            <strong className="font-extrabold">Limiares:</strong> {limiarMaior}/{limiarGrave}
+            <strong className="font-extrabold">Limiares:</strong> {limiaresText}
           </span>
           <span>
             <strong className="font-extrabold">{pv} PV</strong>

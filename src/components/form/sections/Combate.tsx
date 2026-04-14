@@ -28,8 +28,22 @@ export function Combate() {
     >
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         <NumField label="Dificuldade" reg={form.register('dificuldade', { valueAsNumber: true })} err={errors.dificuldade?.message} />
-        <NumField label="Limiar Maior" reg={form.register('limiarMaior', { valueAsNumber: true })} err={errors.limiarMaior?.message} />
-        <NumField label="Limiar Grave" reg={form.register('limiarGrave', { valueAsNumber: true })} err={errors.limiarGrave?.message} />
+        <NumField
+          label="Limiar Maior"
+          placeholder="vazio = Nenhum"
+          reg={form.register('limiarMaior', {
+            setValueAs: (v) => (v === '' || v == null ? null : Number(v)),
+          })}
+          err={errors.limiarMaior?.message}
+        />
+        <NumField
+          label="Limiar Grave"
+          placeholder="vazio = Nenhum"
+          reg={form.register('limiarGrave', {
+            setValueAs: (v) => (v === '' || v == null ? null : Number(v)),
+          })}
+          err={errors.limiarGrave?.message}
+        />
         <NumField label="PV" reg={form.register('pv', { valueAsNumber: true })} err={errors.pv?.message} />
         <NumField label="PF" reg={form.register('pf', { valueAsNumber: true })} err={errors.pf?.message} />
         <NumField label="ATQ (±)" reg={form.register('atq', { valueAsNumber: true })} err={errors.atq?.message} />
@@ -40,11 +54,21 @@ export function Combate() {
 
 type Reg = ReturnType<ReturnType<typeof useFormContext<Adversary>>['register']>;
 
-function NumField({ label, reg, err }: { label: string; reg: Reg; err?: string }) {
+function NumField({
+  label,
+  reg,
+  err,
+  placeholder,
+}: {
+  label: string;
+  reg: Reg;
+  err?: string;
+  placeholder?: string;
+}) {
   return (
     <div>
       <label className="field-label">{label}</label>
-      <Input type="number" {...reg} />
+      <Input type="number" placeholder={placeholder} {...reg} />
       <FieldError message={err} />
     </div>
   );

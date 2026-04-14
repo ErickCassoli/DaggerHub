@@ -1,6 +1,23 @@
-import type { Adversary, LibraryStore } from '@/types/adversary';
+import type { Adversary, LibraryStore, Tipo } from '@/types/adversary';
 
 const STORAGE_KEY = 'daggerhub:adversaries:v1';
+
+/**
+ * Remapeamento de tipos legados para os nomes oficiais do Livro Básico PT-BR
+ * (Cap. 4, pp. 193–208). Mantém bibliotecas salvas funcionando após rename.
+ */
+const LEGACY_TIPO_MAP: Record<string, Tipo> = {
+  brutamontes: 'brutamonte',
+  distancia: 'atirador',
+  furtivo: 'oportunista',
+  padrao: 'comum',
+  suporte: 'assistente',
+};
+
+function migrateLegacyTipo(item: Adversary): Adversary {
+  const legacy = LEGACY_TIPO_MAP[item.tipo as unknown as string];
+  return legacy ? { ...item, tipo: legacy } : item;
+}
 
 function emptyStore(): LibraryStore {
   return { version: 1, items: [] };
@@ -15,7 +32,8 @@ export function loadStore(): LibraryStore {
     if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.items)) {
       return emptyStore();
     }
-    return { version: 1, items: parsed.items };
+    const items = parsed.items.map(migrateLegacyTipo);
+    return { version: 1, items };
   } catch (err) {
     console.warn('[DaggerHub] localStorage corrompido, resetando.', err);
     return emptyStore();

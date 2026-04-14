@@ -28,7 +28,8 @@ export function useAutoSuggest(form: Form) {
 
     TARGET_FIELDS.forEach((field) => {
       if (!dirty[field]) {
-        form.setValue(field, base[field], { shouldDirty: false });
+        // `base[field]` pode ser `number | null` para `limiarMaior`/`limiarGrave`.
+        form.setValue(field, base[field] as never, { shouldDirty: false });
       }
     });
 
@@ -47,7 +48,7 @@ export function applyBaselineOverride(form: Form) {
   const patamar = form.getValues('patamar');
   const base = getBaseline(patamar, tipo);
   TARGET_FIELDS.forEach((field) => {
-    form.setValue(field, base[field], { shouldDirty: true });
+    form.setValue(field, base[field] as never, { shouldDirty: true });
   });
   const ataques = form.getValues('ataques');
   if (ataques[0]) {

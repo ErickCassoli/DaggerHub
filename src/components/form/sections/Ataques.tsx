@@ -21,6 +21,13 @@ export function Ataques() {
         </Button>
       }
     >
+      <datalist id="alcances-oficiais">
+        <option value="corpo a corpo" />
+        <option value="muito próximo" />
+        <option value="próximo" />
+        <option value="distante" />
+        <option value="muito distante" />
+      </datalist>
       <div className="space-y-3">
         {fields.map((f, idx) => {
           const err = errors.ataques?.[idx];
@@ -33,7 +40,11 @@ export function Ataques() {
               </div>
               <div>
                 <label className="field-label">Alcance</label>
-                <Input {...form.register(`ataques.${idx}.alcance`)} placeholder="corpo a corpo" />
+                <Input
+                  list="alcances-oficiais"
+                  {...form.register(`ataques.${idx}.alcance`)}
+                  placeholder="corpo a corpo"
+                />
                 <FieldError message={err?.alcance?.message} />
               </div>
               <div>

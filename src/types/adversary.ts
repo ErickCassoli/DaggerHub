@@ -1,16 +1,16 @@
 export type Patamar = 1 | 2 | 3 | 4;
 
 export const TIPO_VALUES = [
-  'brutamontes',
+  'brutamonte',
   'horda',
   'lider',
   'lacaio',
-  'distancia',
-  'furtivo',
+  'atirador',
+  'oportunista',
   'manipulador',
   'solo',
-  'padrao',
-  'suporte',
+  'comum',
+  'assistente',
 ] as const;
 export type Tipo = (typeof TIPO_VALUES)[number];
 
@@ -45,11 +45,15 @@ export interface Adversary {
   descricao: string;
   motivacoes: string[];
   dificuldade: number;
-  limiarMaior: number;
-  limiarGrave: number;
+  /** Pode ser null (ex.: lacaios têm "Limiar: nenhum"). */
+  limiarMaior: number | null;
+  /** Pode ser null (ex.: manipuladores com limiar "6/Nenhum"). */
+  limiarGrave: number | null;
   pv: number;
   pf: number;
   atq: number;
+  /** Apenas hordas. Formato: "1/PV", "2/PV", "3/PV" etc. */
+  hordaRatio?: string;
   ataques: Attack[];
   experiencias: Experience[];
   habilidades: Ability[];
