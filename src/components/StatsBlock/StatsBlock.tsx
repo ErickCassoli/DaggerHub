@@ -7,7 +7,7 @@ import { AbilityItem } from './AbilityItem';
 /** Formata inteiros com sinal, usando en-dash para negativos (igual ao livro). */
 function formatSigned(n: number): string {
   if (n > 0) return `+${n}`;
-  if (n < 0) return `\u2013${Math.abs(n)}`; // en-dash
+  if (n < 0) return `\u2013${Math.abs(n)}`;
   return '+0';
 }
 
@@ -40,41 +40,39 @@ export const StatsBlock = forwardRef<HTMLDivElement, StatsBlockProps>(function S
     habilidades,
   } = adversary;
 
+  const experienciaLabel = experiencias.length === 1 ? 'Experiência' : 'Experiências';
+
   return (
     <div
       ref={ref}
       className="w-[340px] border border-ink/40 bg-parchment text-ink shadow-md"
-      style={{
-        fontFamily: '"Cormorant Garamond", Georgia, serif',
-      }}
+      style={{ fontFamily: '"Cormorant Garamond", Georgia, serif' }}
     >
       {/* Barra escura com o nome */}
-      <div className="bg-ink px-3 py-1.5 text-parchment">
-        <h1 className="font-display text-[20px] font-bold uppercase tracking-[0.08em] leading-none">
+      <div className="bg-ink px-3 py-1 text-parchment">
+        <h1 className="font-display text-[20px] font-bold uppercase tracking-[0.06em] leading-[1.15]">
           {nome || 'Nome da adversária'}
         </h1>
       </div>
 
-      {/* Corpo */}
-      <div className="px-3 pt-2 pb-2.5">
-        {/* Subtítulo: tipo (patamar) em italic */}
-        <p className="text-[12px] italic text-ink/80 leading-tight">
-          {TIPO_LABEL[tipo]} ({PATAMAR_LABEL[patamar]})
+      {/* Corpo compacto */}
+      <div className="px-3 py-1.5 space-y-0.5 text-[11.5px] leading-[1.3]">
+        {/* Subtítulo: Tipo (patamar) — tipo em bold */}
+        <p>
+          <strong>{TIPO_LABEL[tipo]}</strong> ({PATAMAR_LABEL[patamar]})
         </p>
 
-        {/* Descrição */}
-        {descricao ? (
-          <p className="mt-0.5 text-[11.5px] italic leading-snug">{descricao}</p>
-        ) : null}
+        {/* Descrição em italic */}
+        {descricao ? <p className="italic">{descricao}</p> : null}
 
         {/* Motivações */}
-        <p className="mt-1 text-[11.5px] leading-snug">
+        <p>
           <strong>Motivações e táticas:</strong>{' '}
           {motivacoes.length ? motivacoes.join(', ') : '—'}
         </p>
 
         {/* Stats inline com pipe */}
-        <p className="mt-1 text-[11.5px] leading-snug">
+        <p>
           <strong>Dificuldade:</strong> {dificuldade}
           <Sep />
           <strong>Limiares:</strong> {limiarMaior}/{limiarGrave}
@@ -84,8 +82,8 @@ export const StatsBlock = forwardRef<HTMLDivElement, StatsBlockProps>(function S
           {pf} <strong>PF</strong>
         </p>
 
-        {/* ATQ + ataques, todos inline */}
-        <p className="mt-0.5 text-[11.5px] leading-snug">
+        {/* ATQ + ataques inline */}
+        <p>
           <strong>ATQ:</strong> {formatSigned(atq)}
           {ataques.map((a) => (
             <span key={a.id}>
@@ -95,10 +93,10 @@ export const StatsBlock = forwardRef<HTMLDivElement, StatsBlockProps>(function S
           ))}
         </p>
 
-        {/* Experiências */}
+        {/* Experiência(s) */}
         {experiencias.length > 0 ? (
-          <p className="mt-0.5 text-[11.5px] leading-snug">
-            <strong>Experiências:</strong>{' '}
+          <p>
+            <strong>{experienciaLabel}:</strong>{' '}
             {experiencias.map((e, i) => (
               <span key={e.id}>
                 {i > 0 ? ', ' : ''}
@@ -109,15 +107,15 @@ export const StatsBlock = forwardRef<HTMLDivElement, StatsBlockProps>(function S
         ) : null}
       </div>
 
-      {/* Divisor antes das habilidades */}
+      {/* Divisor + Habilidades */}
       {habilidades.length > 0 ? (
         <>
           <div className="mx-3 h-px bg-ink/60" />
-          <div className="px-3 py-2">
-            <h2 className="font-display text-[11px] font-bold uppercase tracking-[0.15em] leading-none text-ink">
+          <div className="px-3 py-1.5">
+            <h2 className="font-display text-[11px] font-bold uppercase tracking-[0.2em] leading-none text-ink">
               Habilidades
             </h2>
-            <div className="mt-1.5 space-y-1">
+            <div className="mt-1 space-y-0.5">
               {habilidades.map((h) => (
                 <AbilityItem key={h.id} ability={h} />
               ))}
