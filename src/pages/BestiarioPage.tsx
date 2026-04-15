@@ -87,7 +87,7 @@ export function BestiarioPage() {
           <p className="text-ink/70">Nenhuma adversária corresponde aos filtros.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-6 justify-center [grid-template-columns:repeat(auto-fill,minmax(450px,1fr))]">
           {results.map((adv) => (
             <BestiarioCard key={adv.id} adversary={adv} onCopy={() => onCopy(adv.id)} />
           ))}
