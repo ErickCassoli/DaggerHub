@@ -19,7 +19,7 @@ export function LibraryGrid({ items, onDuplicate, onDelete, onExportJson }: Libr
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div className="grid gap-6 justify-center [grid-template-columns:repeat(auto-fill,minmax(450px,1fr))]">
       {items.map((adv) => (
         <AdversaryCard
           key={adv.id}
