@@ -1,3 +1,12 @@
+# Claude Code local state
+.claude/
+
+# Parser inputs (copyrighted source material, not for redistribution)
+docs/*.pdf
+docs/*_raw.txt
+docs/extracted_*.txt
+docs/bestiario_parsed.json
+
 # Logs
 logs
 *.log
