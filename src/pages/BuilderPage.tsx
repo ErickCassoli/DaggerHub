@@ -9,6 +9,7 @@ import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
 import { AdversaryForm } from '@/components/form/AdversaryForm';
 import { StatsBlock } from '@/components/StatsBlock/StatsBlock';
 import { Button } from '@/components/ui/Button';
+import { AppHeader } from '@/components/nav/AppHeader';
 import { exportJson, exportPdf, exportPng } from '@/lib/export';
 
 export function BuilderPage() {
@@ -80,28 +81,26 @@ export function BuilderPage() {
 
   return (
     <div className="mx-auto max-w-7xl p-6">
-      <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <Link to="/" className="text-sm text-ink/70 underline">← Voltar</Link>
-          <h1 className="font-display text-2xl uppercase tracking-wider text-ink">
-            {id ? 'Editar adversária' : 'Nova adversária'}
-          </h1>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button type="submit" form="adversary-form" variant="primary">
-            Salvar
-          </Button>
-          <Button type="button" variant="secondary" onClick={doExportPng} disabled={!!exporting}>
-            {exporting === 'png' ? 'Exportando…' : 'PNG'}
-          </Button>
-          <Button type="button" variant="secondary" onClick={doExportPdf} disabled={!!exporting}>
-            {exporting === 'pdf' ? 'Exportando…' : 'PDF'}
-          </Button>
-          <Button type="button" variant="secondary" onClick={doExportJson}>
-            JSON
-          </Button>
-        </div>
-      </header>
+      <AppHeader
+        subtitle={id ? 'Editar adversária' : 'Nova adversária'}
+        actions={
+          <>
+            <Link to="/" className="text-sm text-ink/70 underline">← Biblioteca</Link>
+            <Button type="submit" form="adversary-form" variant="primary">
+              Salvar
+            </Button>
+            <Button type="button" variant="secondary" onClick={doExportPng} disabled={!!exporting}>
+              {exporting === 'png' ? 'Exportando…' : 'PNG'}
+            </Button>
+            <Button type="button" variant="secondary" onClick={doExportPdf} disabled={!!exporting}>
+              {exporting === 'pdf' ? 'Exportando…' : 'PDF'}
+            </Button>
+            <Button type="button" variant="secondary" onClick={doExportJson}>
+              JSON
+            </Button>
+          </>
+        }
+      />
 
       {lastSavedId && !form.formState.isDirty ? (
         <p className="mb-3 rounded border border-green-800/30 bg-green-50 px-3 py-2 text-sm text-green-900">
