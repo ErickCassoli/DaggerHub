@@ -5,10 +5,10 @@ Guidance for AI assistants (Claude Code, etc.) working in this repository.
 ## Project overview
 
 **DaggerHub** is a static, client-only web app for generating Daggerheart RPG
-adversary stat blocks and battle encounters in **Brazilian Portuguese**. It
-ships baseline stats per *patamar* × *tipo* from the Livro Básico, validates
-input, exports stat blocks to PNG/PDF/JSON, and persists everything to
-`localStorage`. There is **no backend**.
+adversary stat blocks, battle encounters, and environments (*ambientes*) in
+**Brazilian Portuguese**. It ships baseline stats per *patamar* × *tipo* from
+the Livro Básico, validates input, exports stat blocks to PNG/PDF/JSON, and
+persists everything to `localStorage`. There is **no backend**.
 
 UI strings, type/enum values, comments, schema messages, and validator labels
 are all in **pt-BR** — keep new content in pt-BR unless asked otherwise.
@@ -44,23 +44,32 @@ catch regressions.
 
 ```
 src/
-  types/          domain types/enums (Adversary, Encounter, Patamar, Tipo, AbilityKind)
+  types/          domain types/enums (Adversary, Encounter, Ambiente, Patamar,
+                  Tipo, AbilityKind, AmbienteTipo, AmbienteFeatureKind)
   data/           rule tables: TIPOS, PATAMARES, TIER_BASELINES, KEYWORDS,
-                  encounterRules (Battle Points), bestiario (official monsters)
+                  encounterRules (Battle Points), bestiario (official monsters),
+                  ambienteTipos, ambienteBaselines
   lib/            schema (zod), storage, defaults, export, slug,
-                  encounter math, encounterStorage, adversarySources
-  hooks/          useAdversaryLibrary, useEncounterLibrary, useAutoSuggest
+                  encounter math, encounterStorage, adversarySources,
+                  ambienteSchema, ambienteStorage, ambienteDefaults,
+                  ambienteExport
+  hooks/          useAdversaryLibrary, useEncounterLibrary, useAutoSuggest,
+                  useAmbienteLibrary, useAmbienteAutoSuggest
   components/
     StatsBlock/   export-ready preview (StatsBlock, AbilityItem, renderKeywords)
+    AmbienteBlock/  export-ready ambiente preview (AmbienteBlock, FeatureItem)
     form/         AdversaryForm + sections/ (Identidade, Combate, Ataques,
                   Experiencias, Habilidades), KeywordChips, FieldError
+    ambiente/     AmbienteForm + sections/ (Identidade, Detalhes, Adversarios,
+                  Features), AmbienteCard, AmbienteImportButton
     library/      AdversaryCard, LibraryGrid, ImportButton
     bestiario/    BestiarioCard
     encounter/    PartyConfig, BudgetBar, EntryRow, AddAdversaryModal
-    nav/          AppHeader (top nav between Biblioteca / Bestiário / Encontros)
+    nav/          AppHeader (top nav between Biblioteca / Bestiário / Encontros / Ambientes)
     ui/           Button, Input, Select, Textarea, Section, TagInput
   pages/          LibraryPage, BuilderPage, BestiarioPage,
-                  EncountersPage, EncounterBuilderPage
+                  EncountersPage, EncounterBuilderPage,
+                  AmbientesPage, AmbienteBuilderPage
   App.tsx         Routes
   main.tsx        ReactDOM root + HashRouter
   index.css       Tailwind layers + Google Fonts import + .field-label
@@ -80,6 +89,7 @@ docs/
 - `/new`, `/edit/:id` — `BuilderPage`
 - `/bestiario` — `BestiarioPage` (read-only official monsters; copy → user library)
 - `/encounters`, `/encounters/new`, `/encounters/edit/:id` — encounter builder
+- `/ambientes`, `/ambientes/new`, `/ambientes/edit/:id` — ambiente (environment) builder
 
 Anything else redirects to `/`. Use `<Link to="/...">` and `useNavigate()` from
 `react-router-dom`; never hard-code base paths.
@@ -108,6 +118,19 @@ Anything else redirects to `/`. Use `<Link to="/...">` and `useNavigate()` from
 - `EncounterEntry.origem` is `'biblioteca' | 'bestiario'` — resolve refs via
   `resolveAdversary` in `src/lib/adversarySources.ts`.
 
+### Ambiente (`src/types/ambiente.ts`)
+
+- `Ambiente` represents a scene/environment with its own dificuldade, impulsos,
+  habilidades, and características — Livro Básico p.240.
+- `AmbienteTipo`: `'travessia' | 'exploracao' | 'evento' | 'social' | 'batalha'`
+  (use `AMBIENTE_TIPO_VALUES`).
+- `AmbienteFeatureKind`: `'acao' | 'reacao' | 'passiva' | 'medo'` — used by both
+  `habilidades` (active triggers) and `caracteristicas` (the form restricts the
+  latter to `'passiva'`).
+- `adversariosSugeridos` are `{ id, adversaryRef, origem }` refs into the user
+  library or bestiary, resolved with `resolveAdversary`.
+- `potencialMedo` is optional — leave blank for ambientes that don't track Medo.
+
 ### Rule data (treat as canonical, edit deliberately)
 
 - `src/data/baselines.ts` — `TIER_BASELINES[patamar][tipo]` powers auto-suggest
@@ -123,6 +146,10 @@ Anything else redirects to `/`. Use `<Link to="/...">` and `useNavigate()` from
 - `src/data/bestiario.ts` — large generated JSON-as-TS array. **Do not hand-edit**
   unless you are also updating the generator (`docs/parse_bestiary.py`); IDs are
   prefixed `oficial:` to avoid collisions with the user library.
+- `src/data/ambienteTipos.ts` — five official ambiente roles (`AMBIENTE_TIPOS`,
+  `AMBIENTE_TIPO_LABEL`).
+- `src/data/ambienteBaselines.ts` — `AMBIENTE_TIER_BASELINES[patamar]` powers
+  `useAmbienteAutoSuggest` (writes `dificuldade`, `potencialMedo`).
 
 ## Validation (`src/lib/schema.ts`)
 
@@ -137,18 +164,19 @@ Anything else redirects to `/`. Use `<Link to="/...">` and `useNavigate()` from
 When adding fields: update the type, the schema, the `blankAdversary()` default,
 the relevant form section, and the `StatsBlock` render — in that order.
 
-## Persistence (`src/lib/storage.ts`, `src/lib/encounterStorage.ts`)
+## Persistence (`src/lib/storage.ts`, `src/lib/encounterStorage.ts`, `src/lib/ambienteStorage.ts`)
 
-- Keys: `daggerhub:adversaries:v1` and `daggerhub:encounters:v1`.
+- Keys: `daggerhub:adversaries:v1`, `daggerhub:encounters:v1`, and
+  `daggerhub:ambientes:v1`.
 - Store shape: `{ version: 1, items: [...] }`. Bump the version + write a
   migration if you change the schema in a breaking way.
 - `loadStore` migrates legacy `tipo` values via `LEGACY_TIPO_MAP`
   (`brutamontes → brutamonte`, `distancia → atirador`,
   `furtivo → oportunista`, `padrao → comum`, `suporte → assistente`).
   Keep this map; do not remove old keys.
-- The hooks (`useAdversaryLibrary`, `useEncounterLibrary`) wrap all CRUD —
-  prefer them over calling storage directly. They auto-`saveStore` on every
-  state change and stamp `criadoEm`/`atualizadoEm` ISO timestamps.
+- The hooks (`useAdversaryLibrary`, `useEncounterLibrary`, `useAmbienteLibrary`)
+  wrap all CRUD — prefer them over calling storage directly. They auto-save on
+  every state change and stamp `criadoEm`/`atualizadoEm` ISO timestamps.
 
 ## Builder UX
 
@@ -174,6 +202,18 @@ the relevant form section, and the `StatsBlock` render — in that order.
 - `renderKeywords` does the bolding: it matches `**explicit**` plus the
   `KEYWORDS` table (case-insensitive, longest-first). Add new system terms to
   `KEYWORDS` rather than special-casing the renderer.
+
+## Ambiente builder
+
+- `AmbienteBuilderPage` mirrors `BuilderPage`: `react-hook-form` +
+  `zodResolver(ambienteSchema)`, `mode: 'onBlur'`, `blankAmbiente()` defaults,
+  off-screen `AmbienteBlock` for export.
+- `useAmbienteAutoSuggest(form)` writes `dificuldade` and `potencialMedo` from
+  `AMBIENTE_TIER_BASELINES[patamar]` for fields the user hasn't dirtied;
+  `applyAmbienteBaselineOverride` is the explicit reset.
+- The "Adversários sugeridos" section reuses `AddAdversaryModal` from the
+  encounter feature — refs are stored as `{ id, adversaryRef, origem }` and
+  resolved with `resolveAdversary` for both the preview and `AmbienteCard`.
 
 ## Encounter builder
 
