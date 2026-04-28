@@ -1,0 +1,140 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import type { Ambiente } from '@/types/ambiente';
+import { ambienteSchema } from '@/lib/ambienteSchema';
+import { blankAmbiente } from '@/lib/ambienteDefaults';
+import { useAmbienteLibrary } from '@/hooks/useAmbienteLibrary';
+import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
+import { AmbienteForm } from '@/components/ambiente/AmbienteForm';
+import { AmbienteBlock } from '@/components/AmbienteBlock/AmbienteBlock';
+import { Button } from '@/components/ui/Button';
+import { AppHeader } from '@/components/nav/AppHeader';
+import {
+  exportAmbienteJson,
+  exportAmbientePdf,
+  exportAmbientePng,
+} from '@/lib/ambienteExport';
+import { resolveAdversary } from '@/lib/adversarySources';
+
+export function AmbienteBuilderPage() {
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const { get, upsert } = useAmbienteLibrary();
+  const { items: biblioteca } = useAdversaryLibrary();
+
+  const initial = useMemo<Ambiente>(() => {
+    if (id) {
+      const found = get(id);
+      if (found) return found;
+    }
+    return blankAmbiente();
+  }, [id, get]);
+
+  useEffect(() => {
+    if (id && !get(id)) {
+      navigate('/ambientes', { replace: true });
+    }
+  }, [id, get, navigate]);
+
+  const form = useForm<Ambiente>({
+    resolver: zodResolver(ambienteSchema) as never,
+    mode: 'onBlur',
+    defaultValues: initial,
+  });
+
+  const [lastSavedId, setLastSavedId] = useState<string | null>(id ?? null);
+  const preview = form.watch();
+  const previewRef = useRef<HTMLDivElement>(null);
+  const exportRef = useRef<HTMLDivElement>(null);
+  const [exporting, setExporting] = useState<string | null>(null);
+
+  const adversarios = useMemo(
+    () =>
+      preview.adversariosSugeridos
+        .map((a) => resolveAdversary(a.adversaryRef, a.origem, biblioteca)?.nome)
+        .filter((n): n is string => Boolean(n)),
+    [preview.adversariosSugeridos, biblioteca],
+  );
+
+  const onSubmit = (data: Ambiente) => {
+    const saved = upsert(data);
+    setLastSavedId(saved.id);
+    if (!id) {
+      navigate(`/ambientes/edit/${saved.id}`, { replace: true });
+    }
+  };
+
+  const exportTargetNode = () => exportRef.current ?? previewRef.current;
+
+  const doExportPng = async () => {
+    const node = exportTargetNode();
+    if (!node) return;
+    try {
+      setExporting('png');
+      await exportAmbientePng(node, preview.nome || 'ambiente');
+    } finally {
+      setExporting(null);
+    }
+  };
+
+  const doExportPdf = async () => {
+    const node = exportTargetNode();
+    if (!node) return;
+    try {
+      setExporting('pdf');
+      await exportAmbientePdf(node, preview.nome || 'ambiente');
+    } finally {
+      setExporting(null);
+    }
+  };
+
+  const doExportJson = () => exportAmbienteJson(preview);
+
+  return (
+    <div className="mx-auto max-w-7xl p-6">
+      <AppHeader
+        subtitle={id ? 'Editar ambiente' : 'Novo ambiente'}
+        actions={
+          <>
+            <Link to="/ambientes" className="text-sm text-ink/70 underline">← Ambientes</Link>
+            <Button type="submit" form="ambiente-form" variant="primary">Salvar</Button>
+            <Button type="button" variant="secondary" onClick={doExportPng} disabled={!!exporting}>
+              {exporting === 'png' ? 'Exportando…' : 'PNG'}
+            </Button>
+            <Button type="button" variant="secondary" onClick={doExportPdf} disabled={!!exporting}>
+              {exporting === 'pdf' ? 'Exportando…' : 'PDF'}
+            </Button>
+            <Button type="button" variant="secondary" onClick={doExportJson}>JSON</Button>
+          </>
+        }
+      />
+
+      {lastSavedId && !form.formState.isDirty ? (
+        <p className="mb-3 rounded border border-green-800/30 bg-green-50 px-3 py-2 text-sm text-green-900">
+          Salvo no navegador (localStorage).
+        </p>
+      ) : null}
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_470px]">
+        <AmbienteForm form={form} onSubmit={onSubmit} />
+
+        <aside className="lg:sticky lg:top-6 lg:self-start">
+          <h2 className="field-label mb-2">Preview</h2>
+          <div className="flex justify-center">
+            <AmbienteBlock ambiente={preview} adversarios={adversarios} ref={previewRef} />
+          </div>
+          <p className="mt-3 text-xs text-ink/60">
+            Este é exatamente o bloco que será exportado. Use as keywords clicáveis nas
+            descrições para destacar termos do sistema.
+          </p>
+        </aside>
+      </div>
+
+      <div style={{ position: 'absolute', left: -9999, top: 0, pointerEvents: 'none' }} aria-hidden>
+        <AmbienteBlock ambiente={preview} adversarios={adversarios} ref={exportRef} />
+      </div>
+    </div>
+  );
+}
