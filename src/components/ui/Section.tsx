@@ -13,11 +13,11 @@ export function Section({ title, subtitle, defaultOpen = true, children, actions
   const [open, setOpen] = useState(defaultOpen);
   return (
     <section className="rounded-md border border-ink/20 bg-white/60 shadow-sm">
-      <header className="flex items-center justify-between border-b border-ink/10 px-4 py-3">
+      <header className="flex flex-wrap items-center justify-between gap-2 border-b border-ink/10 px-4 py-3">
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="flex items-center gap-2 text-left"
+          className="flex min-w-0 items-center gap-2 text-left"
         >
           <span
             className={clsx(

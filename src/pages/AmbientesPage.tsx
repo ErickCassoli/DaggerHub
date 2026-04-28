@@ -16,7 +16,7 @@ export function AmbientesPage() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl p-6">
+    <div className="mx-auto max-w-6xl p-4 sm:p-6">
       <AppHeader
         subtitle="Ambientes — pedaços de cena com regras próprias (Livro Básico p.240)"
         actions={
@@ -35,16 +35,15 @@ export function AmbientesPage() {
           <p className="mt-1 text-sm text-ink/60">Crie o primeiro no botão acima.</p>
         </div>
       ) : (
-        <div className="[column-gap:1.5rem] [columns:450px]">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-[repeat(auto-fill,minmax(450px,1fr))]">
           {items.map((amb) => (
-            <div key={amb.id} className="mb-6 break-inside-avoid">
-              <AmbienteCard
-                ambiente={amb}
-                onDuplicate={() => duplicate(amb.id)}
-                onDelete={() => confirmDelete(amb.id)}
-                onExportJson={() => exportAmbienteJson(amb)}
-              />
-            </div>
+            <AmbienteCard
+              key={amb.id}
+              ambiente={amb}
+              onDuplicate={() => duplicate(amb.id)}
+              onDelete={() => confirmDelete(amb.id)}
+              onExportJson={() => exportAmbienteJson(amb)}
+            />
           ))}
         </div>
       )}

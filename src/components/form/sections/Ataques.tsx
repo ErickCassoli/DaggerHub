@@ -32,7 +32,7 @@ export function Ataques() {
         {fields.map((f, idx) => {
           const err = errors.ataques?.[idx];
           return (
-            <div key={f.id} className="grid grid-cols-1 gap-2 rounded border border-ink/10 p-3 md:grid-cols-[1fr_1fr_1fr_auto]">
+            <div key={f.id} className="grid grid-cols-1 gap-2 rounded border border-ink/10 p-3 sm:grid-cols-2 md:grid-cols-[1fr_1fr_1fr_auto]">
               <div>
                 <label className="field-label">Nome</label>
                 <Input {...form.register(`ataques.${idx}.nome`)} placeholder="Adaga" />

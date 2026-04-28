@@ -19,16 +19,15 @@ export function LibraryGrid({ items, onDuplicate, onDelete, onExportJson }: Libr
   }
 
   return (
-    <div className="[column-gap:1.5rem] [columns:450px]">
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-[repeat(auto-fill,minmax(450px,1fr))]">
       {items.map((adv) => (
-        <div key={adv.id} className="mb-6 break-inside-avoid">
-          <AdversaryCard
-            adversary={adv}
-            onDuplicate={() => onDuplicate(adv.id)}
-            onDelete={() => onDelete(adv.id)}
-            onExportJson={() => onExportJson(adv)}
-          />
-        </div>
+        <AdversaryCard
+          key={adv.id}
+          adversary={adv}
+          onDuplicate={() => onDuplicate(adv.id)}
+          onDelete={() => onDelete(adv.id)}
+          onExportJson={() => onExportJson(adv)}
+        />
       ))}
     </div>
   );

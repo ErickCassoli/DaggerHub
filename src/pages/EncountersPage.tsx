@@ -19,7 +19,7 @@ export function EncountersPage() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl p-6">
+    <div className="mx-auto max-w-6xl p-4 sm:p-6">
       <AppHeader
         subtitle="Construtor de encontros — Livro Básico p.197"
         actions={
@@ -35,7 +35,7 @@ export function EncountersPage() {
           <p className="mt-1 text-sm text-ink/60">Crie o primeiro no botão acima.</p>
         </div>
       ) : (
-        <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {items.map((enc) => {
             const budget = calculateBudget(enc.party, enc.ajustes);
             const { total } = encounterCost(

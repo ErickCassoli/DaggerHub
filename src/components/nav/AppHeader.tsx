@@ -19,8 +19,8 @@ const NAV = [
 export function AppHeader({ actions, subtitle }: AppHeaderProps) {
   return (
     <header className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-ink/20 pb-4">
-      <div>
-        <h1 className="font-display text-3xl uppercase tracking-wider text-ink">DaggerHub</h1>
+      <div className="min-w-0">
+        <h1 className="font-display text-2xl uppercase tracking-wider text-ink sm:text-3xl">DaggerHub</h1>
         <p className="text-sm text-ink/70">{subtitle ?? 'Gerador de stat blocks — Daggerheart (pt-BR)'}</p>
         <nav className="mt-3 flex flex-wrap gap-1 text-sm">
           {NAV.map((item) => (

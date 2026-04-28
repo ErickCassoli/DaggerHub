@@ -25,8 +25,8 @@ export function EntryRow({ entry, adversary, custo, onChangeQty, onRemove }: Ent
   }
 
   return (
-    <li className="flex items-center gap-3 rounded border border-ink/20 bg-white/60 px-3 py-2">
-      <div className="flex-1 min-w-0">
+    <li className="flex flex-wrap items-center gap-3 rounded border border-ink/20 bg-white/60 px-3 py-2">
+      <div className="min-w-0 flex-1 basis-full sm:basis-0">
         <p className="truncate font-semibold text-ink">
           {adversary.nome}
           {entry.origem === 'bestiario' ? (

@@ -106,7 +106,7 @@ export function EncounterBuilderPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl p-6">
+    <div className="mx-auto max-w-7xl p-4 sm:p-6">
       <AppHeader
         subtitle={id ? 'Editar encontro' : 'Novo encontro'}
         actions={

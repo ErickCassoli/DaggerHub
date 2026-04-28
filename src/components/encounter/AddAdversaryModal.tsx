@@ -38,8 +38,8 @@ export function AddAdversaryModal({ open, biblioteca, onClose, onPick }: AddAdve
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4">
-      <div className="flex max-h-[min(90vh,800px)] w-full max-w-3xl flex-col rounded-md border border-ink/30 bg-parchment shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-2 sm:p-4">
+      <div className="flex max-h-[calc(100vh-1rem)] w-full max-w-3xl flex-col rounded-md border border-ink/30 bg-parchment shadow-xl sm:max-h-[min(90vh,800px)]">
         <header className="flex items-center justify-between border-b border-ink/20 px-4 py-3">
           <h2 className="font-display text-lg uppercase tracking-wide text-ink">
             Adicionar adversária
@@ -47,20 +47,20 @@ export function AddAdversaryModal({ open, biblioteca, onClose, onPick }: AddAdve
           <Button size="sm" variant="ghost" onClick={onClose} aria-label="Fechar">✕</Button>
         </header>
 
-        <div className="grid grid-cols-1 gap-3 border-b border-ink/20 px-4 py-3 sm:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 border-b border-ink/20 px-4 py-3 sm:grid-cols-2 lg:grid-cols-4">
           <Input
             type="search"
             placeholder="Buscar por nome…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="sm:col-span-2"
+            className="sm:col-span-2 lg:col-span-2"
           />
           <Select value={origem} onChange={(e) => setOrigem(e.target.value as OrigemFilter)}>
             <option value="todos">Origem: todos</option>
             <option value="biblioteca">Biblioteca</option>
             <option value="bestiario">Bestiário</option>
           </Select>
-          <div className="grid grid-cols-2 gap-2 sm:col-span-1">
+          <div className="grid grid-cols-2 gap-2">
             <Select value={tipo} onChange={(e) => setTipo(e.target.value as Tipo | '')}>
               <option value="">Tipo</option>
               {TIPOS.map((t) => (
@@ -89,9 +89,9 @@ export function AddAdversaryModal({ open, biblioteca, onClose, onPick }: AddAdve
               {results.map(({ adversary, origem: resultOrigem }) => (
                 <li
                   key={`${resultOrigem}:${adversary.id}`}
-                  className="flex items-center gap-3 rounded border border-ink/20 bg-white/60 px-3 py-2"
+                  className="flex flex-wrap items-center gap-3 rounded border border-ink/20 bg-white/60 px-3 py-2"
                 >
-                  <div className="flex-1 min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold text-ink">
                       {adversary.nome}
                       {resultOrigem === 'bestiario' ? (
