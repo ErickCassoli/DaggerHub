@@ -6,7 +6,7 @@ const STORAGE_KEY = 'daggerhub:adversaries:v1';
  * Remapeamento de tipos legados para os nomes oficiais do Livro Básico PT-BR
  * (Cap. 4, pp. 193–208). Mantém bibliotecas salvas funcionando após rename.
  */
-const LEGACY_TIPO_MAP: Record<string, Tipo> = {
+const LEGACY_TIPO_MAP: Partial<Record<string, Tipo>> = {
   brutamontes: 'brutamonte',
   distancia: 'atirador',
   furtivo: 'oportunista',
@@ -15,7 +15,7 @@ const LEGACY_TIPO_MAP: Record<string, Tipo> = {
 };
 
 function migrateLegacyTipo(item: Adversary): Adversary {
-  const legacy = LEGACY_TIPO_MAP[item.tipo as unknown as string];
+  const legacy = LEGACY_TIPO_MAP[item.tipo as string];
   return legacy ? { ...item, tipo: legacy } : item;
 }
 
