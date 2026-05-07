@@ -15,7 +15,7 @@ const LEGACY_TIPO_MAP: Record<string, Tipo> = {
 };
 
 function migrateLegacyTipo(item: Adversary): Adversary {
-  const legacy = LEGACY_TIPO_MAP[item.tipo as unknown as string];
+  const legacy = LEGACY_TIPO_MAP[item.tipo as string];
   return legacy ? { ...item, tipo: legacy } : item;
 }
 
