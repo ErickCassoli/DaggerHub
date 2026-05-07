@@ -1,14 +1,6 @@
 import type { Encounter } from '@/types/encounter';
 import { slugify } from '@/lib/slug';
-
-function triggerDownload(url: string, filename: string) {
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
+import { triggerDownload } from '@/lib/exportUtils';
 
 export function exportEncounterJson(encounter: Encounter): void {
   const blob = new Blob([JSON.stringify(encounter, null, 2)], { type: 'application/json' });

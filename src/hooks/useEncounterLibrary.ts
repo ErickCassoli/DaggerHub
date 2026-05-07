@@ -50,5 +50,16 @@ export function useEncounterLibrary() {
     return copy;
   }, [store.items]);
 
-  return { items: store.items, get, upsert, remove, duplicate };
+  const importOne = useCallback((enc: Encounter) => {
+    const now = new Date().toISOString();
+    setStore((s) => {
+      const collides = s.items.some((i) => i.id === enc.id);
+      const toAdd: Encounter = collides
+        ? { ...enc, id: nanoid(10), nome: `${enc.nome} (cópia)`, atualizadoEm: now }
+        : enc;
+      return upsertEncounter(s, toAdd);
+    });
+  }, []);
+
+  return { items: store.items, get, upsert, remove, duplicate, importOne };
 }

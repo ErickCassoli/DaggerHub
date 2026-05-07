@@ -1,22 +1,8 @@
-import { toPng } from 'html-to-image';
 import jsPDF from 'jspdf';
 import type { Ambiente } from '@/types/ambiente';
 import { ambienteSchema } from '@/lib/ambienteSchema';
 import { slugify } from '@/lib/slug';
-
-function triggerDownload(url: string, filename: string) {
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
-
-async function nodeToPng(node: HTMLElement): Promise<{ dataUrl: string; width: number; height: number }> {
-  const dataUrl = await toPng(node, { pixelRatio: 2, cacheBust: true });
-  return { dataUrl, width: node.offsetWidth, height: node.offsetHeight };
-}
+import { triggerDownload, nodeToPng } from '@/lib/exportUtils';
 
 export async function exportAmbientePng(node: HTMLElement, nome: string): Promise<void> {
   const { dataUrl } = await nodeToPng(node);
