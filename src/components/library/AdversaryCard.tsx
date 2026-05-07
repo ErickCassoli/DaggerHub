@@ -13,7 +13,7 @@ interface AdversaryCardProps {
 export function AdversaryCard({ adversary, onDuplicate, onDelete, onExportJson }: AdversaryCardProps) {
   return (
     <article className="flex w-full flex-col items-center gap-3">
-      <div className="w-full max-w-full overflow-x-auto">
+      <div className="w-full max-w-[450px] overflow-x-auto">
         <StatsBlock adversary={adversary} />
       </div>
 
