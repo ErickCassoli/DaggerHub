@@ -40,11 +40,9 @@ export function exportJson(adversary: Adversary): void {
   URL.revokeObjectURL(url);
 }
 
-export interface JsonImportResult {
-  ok: boolean;
-  data?: Adversary;
-  error?: string;
-}
+export type JsonImportResult =
+  | { ok: true; data: Adversary }
+  | { ok: false; error: string };
 
 export async function parseJsonImport(file: File): Promise<JsonImportResult> {
   try {
@@ -53,7 +51,10 @@ export async function parseJsonImport(file: File): Promise<JsonImportResult> {
     const parsed = adversarySchema.safeParse(raw);
     if (!parsed.success) {
       const issue = parsed.error.issues[0];
-      return { ok: false, error: `Arquivo inválido: ${issue.path.join('.')} — ${issue.message}` };
+      const msg = issue
+        ? `Arquivo inválido: ${issue.path.join('.')} — ${issue.message}`
+        : 'Arquivo inválido';
+      return { ok: false, error: msg };
     }
     return { ok: true, data: parsed.data as Adversary };
   } catch (err) {

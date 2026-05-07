@@ -15,8 +15,8 @@ export function AmbienteImportButton({ onImport }: AmbienteImportButtonProps) {
     if (!file) return;
     setError(null);
     const res = await parseAmbienteJsonImport(file);
-    if (!res.ok || !res.data) {
-      setError(res.error ?? 'Erro ao importar');
+    if (!res.ok) {
+      setError(res.error);
       return;
     }
     onImport(res.data);
