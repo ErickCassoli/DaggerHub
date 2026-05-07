@@ -15,8 +15,8 @@ export function ImportButton({ onImport }: ImportButtonProps) {
     if (!file) return;
     setError(null);
     const res = await parseJsonImport(file);
-    if (!res.ok || !res.data) {
-      setError(res.error ?? 'Erro ao importar');
+    if (!res.ok) {
+      setError(res.error);
       return;
     }
     onImport(res.data);

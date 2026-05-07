@@ -37,11 +37,9 @@ export function exportAmbienteJson(ambiente: Ambiente): void {
   URL.revokeObjectURL(url);
 }
 
-export interface AmbienteJsonImportResult {
-  ok: boolean;
-  data?: Ambiente;
-  error?: string;
-}
+export type AmbienteJsonImportResult =
+  | { ok: true; data: Ambiente }
+  | { ok: false; error: string };
 
 export async function parseAmbienteJsonImport(file: File): Promise<AmbienteJsonImportResult> {
   try {
@@ -50,7 +48,10 @@ export async function parseAmbienteJsonImport(file: File): Promise<AmbienteJsonI
     const parsed = ambienteSchema.safeParse(raw);
     if (!parsed.success) {
       const issue = parsed.error.issues[0];
-      return { ok: false, error: `Arquivo inválido: ${issue.path.join('.')} — ${issue.message}` };
+      const msg = issue
+        ? `Arquivo inválido: ${issue.path.join('.')} — ${issue.message}`
+        : 'Arquivo inválido';
+      return { ok: false, error: msg };
     }
     return { ok: true, data: parsed.data as Ambiente };
   } catch (err) {
