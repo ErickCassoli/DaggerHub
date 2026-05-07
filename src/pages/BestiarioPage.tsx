@@ -82,9 +82,10 @@ export function BestiarioPage() {
         </Select>
         <Select
           value={patamar === '' ? '' : String(patamar)}
-          onChange={(e) =>
-            setPatamar(e.target.value === '' ? '' : (Number(e.target.value) as Patamar))
-          }
+          onChange={(e) => {
+            const found = PATAMARES.find((p) => String(p.value) === e.target.value);
+            setPatamar(found ? found.value : '');
+          }}
         >
           <option value="">Todos os patamares</option>
           {PATAMARES.map((p) => (
