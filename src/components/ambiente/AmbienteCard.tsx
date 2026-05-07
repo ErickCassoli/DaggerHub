@@ -20,7 +20,7 @@ export function AmbienteCard({ ambiente, onDuplicate, onDelete, onExportJson }: 
 
   return (
     <article className="flex w-full flex-col items-center gap-3">
-      <div className="w-full max-w-full overflow-x-auto">
+      <div className="w-full max-w-[450px] overflow-x-auto">
         <AmbienteBlock ambiente={ambiente} adversarios={adversarios} />
       </div>
 

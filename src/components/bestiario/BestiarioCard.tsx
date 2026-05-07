@@ -10,8 +10,8 @@ interface BestiarioCardProps {
 export function BestiarioCard({ adversary, onCopy }: BestiarioCardProps) {
   return (
     <article className="flex w-full flex-col items-center gap-3">
-      <div className="relative w-full max-w-full overflow-x-auto">
-        <span className="absolute -top-2 right-2 z-10 rounded bg-gold/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink shadow sm:-right-2">
+      <div className="relative w-full max-w-[450px] overflow-x-auto">
+        <span className="absolute top-2 right-2 z-10 rounded bg-gold/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink shadow">
           oficial
         </span>
         <StatsBlock adversary={adversary} />
