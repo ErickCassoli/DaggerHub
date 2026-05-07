@@ -19,10 +19,12 @@ export function AmbienteCard({ ambiente, onDuplicate, onDelete, onExportJson }: 
     .filter((n): n is string => Boolean(n));
 
   return (
-    <article className="flex flex-col items-center gap-3">
-      <AmbienteBlock ambiente={ambiente} adversarios={adversarios} />
+    <article className="flex w-full flex-col items-center gap-3">
+      <div className="w-full max-w-full overflow-x-auto">
+        <AmbienteBlock ambiente={ambiente} adversarios={adversarios} />
+      </div>
 
-      <div className="flex w-[450px] max-w-full flex-wrap items-center gap-2">
+      <div className="flex w-full max-w-[450px] flex-wrap items-center gap-2">
         <Link to={`/ambientes/edit/${ambiente.id}`}>
           <Button size="sm" variant="primary">Editar</Button>
         </Link>

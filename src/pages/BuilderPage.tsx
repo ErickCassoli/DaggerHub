@@ -80,7 +80,7 @@ export function BuilderPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl p-6">
+    <div className="mx-auto max-w-7xl p-4 sm:p-6">
       <AppHeader
         subtitle={id ? 'Editar adversária' : 'Nova adversária'}
         actions={
@@ -113,7 +113,7 @@ export function BuilderPage() {
 
         <aside className="lg:sticky lg:top-6 lg:self-start">
           <h2 className="field-label mb-2">Preview</h2>
-          <div className="flex justify-center">
+          <div className="flex justify-center overflow-x-auto">
             <StatsBlock adversary={preview} ref={previewRef} />
           </div>
           <p className="mt-3 text-xs text-ink/60">

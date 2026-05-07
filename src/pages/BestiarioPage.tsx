@@ -64,7 +64,7 @@ export function BestiarioPage() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl p-6">
+    <div className="mx-auto max-w-6xl p-4 sm:p-6">
       <AppHeader subtitle="Bestiário oficial — Livro Básico pp.209–239" />
 
       <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_200px_200px]">
@@ -118,11 +118,9 @@ export function BestiarioPage() {
             {Math.min(page * PAGE_SIZE, results.length)} de {results.length}
           </p>
 
-          <div className="[column-gap:1.5rem] [columns:450px]">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-[repeat(auto-fill,minmax(450px,1fr))]">
             {pageItems.map((adv) => (
-              <div key={adv.id} className="mb-6 break-inside-avoid">
-                <BestiarioCard adversary={adv} onCopy={() => onCopy(adv.id)} />
-              </div>
+              <BestiarioCard key={adv.id} adversary={adv} onCopy={() => onCopy(adv.id)} />
             ))}
           </div>
 

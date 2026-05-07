@@ -12,10 +12,12 @@ interface AdversaryCardProps {
 
 export function AdversaryCard({ adversary, onDuplicate, onDelete, onExportJson }: AdversaryCardProps) {
   return (
-    <article className="flex flex-col items-center gap-3">
-      <StatsBlock adversary={adversary} />
+    <article className="flex w-full flex-col items-center gap-3">
+      <div className="w-full max-w-full overflow-x-auto">
+        <StatsBlock adversary={adversary} />
+      </div>
 
-      <div className="flex w-[450px] max-w-full flex-wrap items-center gap-2">
+      <div className="flex w-full max-w-[450px] flex-wrap items-center gap-2">
         <Link to={`/edit/${adversary.id}`}>
           <Button size="sm" variant="primary">Editar</Button>
         </Link>

@@ -28,7 +28,7 @@ export function Experiencias() {
         {fields.map((f, idx) => {
           const err = errors.experiencias?.[idx];
           return (
-            <div key={f.id} className="grid grid-cols-[1fr_120px_auto] gap-2 rounded border border-ink/10 p-3">
+            <div key={f.id} className="grid grid-cols-1 gap-2 rounded border border-ink/10 p-3 sm:grid-cols-[1fr_120px_auto]">
               <div>
                 <label className="field-label">Nome</label>
                 <Input {...form.register(`experiencias.${idx}.nome`)} placeholder="Socialite" />

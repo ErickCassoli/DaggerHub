@@ -56,7 +56,7 @@ function HabilidadeRow({
 
   return (
     <div className="space-y-2 rounded border border-ink/10 p-3">
-      <div className="grid grid-cols-1 gap-2 md:grid-cols-[1fr_180px_auto]">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_180px_auto]">
         <div>
           <label className="field-label">Nome</label>
           <Input {...form.register(`habilidades.${idx}.nome`)} placeholder="Bode Expiatório" />
