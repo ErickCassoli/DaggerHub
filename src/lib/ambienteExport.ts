@@ -1,4 +1,3 @@
-import jsPDF from 'jspdf';
 import type { Ambiente } from '@/types/ambiente';
 import { ambienteSchema } from '@/lib/ambienteSchema';
 import { slugify } from '@/lib/slug';
@@ -11,6 +10,7 @@ export async function exportAmbientePng(node: HTMLElement, nome: string): Promis
 
 export async function exportAmbientePdf(node: HTMLElement, nome: string): Promise<void> {
   const { dataUrl, width, height } = await nodeToPng(node);
+  const { default: jsPDF } = await import('jspdf');
   const doc = new jsPDF({ unit: 'pt', format: [width, height], orientation: width > height ? 'l' : 'p' });
   doc.addImage(dataUrl, 'PNG', 0, 0, width, height);
   doc.save(`${slugify(nome || 'ambiente')}.pdf`);
