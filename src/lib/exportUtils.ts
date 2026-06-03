@@ -12,6 +12,9 @@ export function triggerDownload(url: string, filename: string): void {
 export async function nodeToPng(
   node: HTMLElement,
 ): Promise<{ dataUrl: string; width: number; height: number }> {
-  const dataUrl = await toPng(node, { pixelRatio: 2, cacheBust: true });
+  // cacheBust:false — os blocos de export usam fontes de sistema; não há recurso
+  // externo crítico para embutir. Evita requisição desnecessária a fonts.googleapis.com
+  // em cada export, melhorando privacidade e funcionamento offline.
+  const dataUrl = await toPng(node, { pixelRatio: 2, cacheBust: false });
   return { dataUrl, width: node.offsetWidth, height: node.offsetHeight };
 }
