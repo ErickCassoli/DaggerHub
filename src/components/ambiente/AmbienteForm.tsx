@@ -9,14 +9,15 @@ import { AmbienteFeatures } from './sections/AmbienteFeatures';
 interface AmbienteFormProps {
   form: UseFormReturn<Ambiente>;
   onSubmit: (data: Ambiente) => void;
+  onInvalid?: () => void;
 }
 
-export function AmbienteForm({ form, onSubmit }: AmbienteFormProps) {
+export function AmbienteForm({ form, onSubmit, onInvalid }: AmbienteFormProps) {
   useAmbienteAutoSuggest(form);
 
   return (
     <FormProvider {...form}>
-      <form id="ambiente-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form id="ambiente-form" onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="space-y-4">
         <AmbienteIdentidade />
         <AmbienteDetalhes />
         <AmbienteAdversarios />

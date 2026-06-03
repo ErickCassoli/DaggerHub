@@ -9,9 +9,10 @@ const ABILITY_LABEL: Record<Ability['tipo'], string> = {
 
 export function AbilityItem({ ability }: { ability: Ability }) {
   return (
-    <p className="my-[8px] text-[0.9rem] leading-[1.4]">
+    <p className="my-[8px] text-[0.9rem] leading-[1.5]">
+      <span className="text-[0.7rem] text-[#a3802e]">◆ </span>
       <strong className="font-extrabold">{ability.nome}</strong>
-      <em> ({ABILITY_LABEL[ability.tipo]}):</em>{' '}
+      <em className="text-[#a3802e]"> ({ABILITY_LABEL[ability.tipo]})</em>:{' '}
       {renderKeywords(ability.descricao)}
     </p>
   );

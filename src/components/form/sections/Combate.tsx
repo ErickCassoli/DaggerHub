@@ -68,7 +68,7 @@ function NumField({
   return (
     <div>
       <label className="field-label">{label}</label>
-      <Input type="number" placeholder={placeholder} {...reg} />
+      <Input type="number" placeholder={placeholder} hasError={!!err} {...reg} />
       <FieldError message={err} />
     </div>
   );

@@ -33,9 +33,20 @@ export function useAmbienteAutoSuggest(form: Form) {
 }
 
 export function applyAmbienteBaselineOverride(form: Form) {
-  const patamar = form.getValues('patamar');
-  const base = getAmbienteBaseline(patamar);
-  TARGET_FIELDS.forEach((field) => {
-    form.setValue(field, base[field] as never, { shouldDirty: true });
-  });
+  const values = form.getValues();
+  const base = getAmbienteBaseline(values.patamar);
+
+  const updated = { ...values };
+  for (const field of TARGET_FIELDS) {
+    (updated as Record<string, unknown>)[field] = base[field];
+  }
+
+  form.reset(updated, { keepDefaultValues: true });
+
+  for (const field of TARGET_FIELDS) {
+    form.setValue(field, base[field] as never, {
+      shouldDirty: true,
+      shouldValidate: false,
+    });
+  }
 }

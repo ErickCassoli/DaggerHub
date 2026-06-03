@@ -29,7 +29,7 @@ export function AmbienteDetalhes() {
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         <div>
           <label className="field-label">Dificuldade</label>
-          <Input type="number" {...form.register('dificuldade', { valueAsNumber: true })} />
+          <Input type="number" hasError={!!errors.dificuldade} {...form.register('dificuldade', { valueAsNumber: true })} />
           <FieldError message={errors.dificuldade?.message} />
         </div>
         <div>

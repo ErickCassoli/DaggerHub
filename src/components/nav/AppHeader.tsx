@@ -32,7 +32,7 @@ export function AppHeader({ actions, subtitle }: AppHeaderProps) {
                 clsx(
                   'rounded px-3 py-1 font-semibold uppercase tracking-wide transition-colors',
                   isActive
-                    ? 'bg-ink text-parchment'
+                    ? 'bg-ink text-parchment shadow-[0_2px_0_#a3802e]'
                     : 'text-ink/70 hover:bg-ink/10',
                 )
               }

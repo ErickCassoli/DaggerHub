@@ -21,7 +21,7 @@ export function Identidade() {
           <label className="field-label" htmlFor="nome">
             Nome
           </label>
-          <Input id="nome" {...form.register('nome')} placeholder="Ex: Palaciano" />
+          <Input id="nome" hasError={!!errors.nome} {...form.register('nome')} placeholder="Ex: Palaciano" />
           <FieldError message={errors.nome?.message} />
         </div>
 
