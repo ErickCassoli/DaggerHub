@@ -1,4 +1,3 @@
-import jsPDF from 'jspdf';
 import type { Adversary } from '@/types/adversary';
 import { adversarySchema } from '@/lib/schema';
 import { slugify } from '@/lib/slug';
@@ -11,6 +10,7 @@ export async function exportPng(node: HTMLElement, nome: string): Promise<void> 
 
 export async function exportPdf(node: HTMLElement, nome: string): Promise<void> {
   const { dataUrl, width, height } = await nodeToPng(node);
+  const { default: jsPDF } = await import('jspdf');
   const doc = new jsPDF({ unit: 'pt', format: [width, height], orientation: width > height ? 'l' : 'p' });
   doc.addImage(dataUrl, 'PNG', 0, 0, width, height);
   doc.save(`${slugify(nome)}.pdf`);
