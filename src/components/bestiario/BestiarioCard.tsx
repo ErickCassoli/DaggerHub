@@ -1,13 +1,15 @@
-import type { Adversary } from '@/types/adversary';
+import type { Adversary, Patamar } from '@/types/adversary';
 import { Button } from '@/components/ui/Button';
 import { StatsBlock } from '@/components/StatsBlock/StatsBlock';
+import { PATAMARES } from '@/data/patamares';
 
 interface BestiarioCardProps {
   adversary: Adversary;
   onCopy: () => void;
+  onCopyAsTier: (newPatamar: Patamar) => void;
 }
 
-export function BestiarioCard({ adversary, onCopy }: BestiarioCardProps) {
+export function BestiarioCard({ adversary, onCopy, onCopyAsTier }: BestiarioCardProps) {
   return (
     <article className="flex w-full flex-col items-center gap-3">
       <div className="relative w-full max-w-[450px] overflow-x-auto">
@@ -21,6 +23,20 @@ export function BestiarioCard({ adversary, onCopy }: BestiarioCardProps) {
         <Button size="sm" variant="primary" onClick={onCopy}>
           Copiar para minha biblioteca
         </Button>
+        <select
+          value=""
+          aria-label="Copiar adversária para outro patamar"
+          onChange={(e) => {
+            const val = Number(e.target.value) as Patamar;
+            if (val) onCopyAsTier(val);
+          }}
+          className="rounded border border-ink/30 bg-parchment px-2 py-1 text-xs text-ink focus:outline-none focus:ring-1 focus:ring-ink/40"
+        >
+          <option value="" disabled>Copiar como patamar…</option>
+          {PATAMARES.map((p) => (
+            <option key={p.value} value={p.value}>{p.label}</option>
+          ))}
+        </select>
       </div>
     </article>
   );
