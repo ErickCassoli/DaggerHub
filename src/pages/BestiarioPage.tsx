@@ -137,14 +137,15 @@ export function BestiarioPage() {
             {Math.min(page * PAGE_SIZE, results.length)} de {results.length}
           </p>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-[repeat(auto-fill,minmax(450px,1fr))]">
+          <div className="columns-1 gap-6 sm:columns-[470px]">
             {pageItems.map((adv) => (
-              <BestiarioCard
-                key={adv.id}
-                adversary={adv}
-                onCopy={() => onCopy(adv.id)}
-                onCopyAsTier={(newPatamar) => onCopyAsTier(adv.id, newPatamar)}
-              />
+              <div key={adv.id} className="mb-6 break-inside-avoid">
+                <BestiarioCard
+                  adversary={adv}
+                  onCopy={() => onCopy(adv.id)}
+                  onCopyAsTier={(newPatamar) => onCopyAsTier(adv.id, newPatamar)}
+                />
+              </div>
             ))}
           </div>
 

@@ -35,15 +35,16 @@ export function AmbientesPage() {
           <p className="mt-1 text-sm text-ink/60">Crie o primeiro no botão acima.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-[repeat(auto-fill,minmax(450px,1fr))]">
+        <div className="columns-1 gap-6 sm:columns-[470px]">
           {items.map((amb) => (
-            <AmbienteCard
-              key={amb.id}
-              ambiente={amb}
-              onDuplicate={() => duplicate(amb.id)}
-              onDelete={() => confirmDelete(amb.id)}
-              onExportJson={() => exportAmbienteJson(amb)}
-            />
+            <div key={amb.id} className="mb-6 break-inside-avoid">
+              <AmbienteCard
+                ambiente={amb}
+                onDuplicate={() => duplicate(amb.id)}
+                onDelete={() => confirmDelete(amb.id)}
+                onExportJson={() => exportAmbienteJson(amb)}
+              />
+            </div>
           ))}
         </div>
       )}
