@@ -44,14 +44,32 @@ export function useAutoSuggest(form: Form) {
 
 /** Força sobrescrever todos os stats com o baseline do par atual. */
 export function applyBaselineOverride(form: Form) {
-  const tipo = form.getValues('tipo');
-  const patamar = form.getValues('patamar');
-  const base = getBaseline(patamar, tipo);
-  TARGET_FIELDS.forEach((field) => {
-    form.setValue(field, base[field] as never, { shouldDirty: true });
-  });
-  const ataques = form.getValues('ataques');
-  if (ataques[0]) {
-    form.setValue('ataques.0.dano', base.danoSugerido, { shouldDirty: true });
+  const values = form.getValues();
+  const base = getBaseline(values.patamar, values.tipo);
+
+  const updated = { ...values };
+  for (const field of TARGET_FIELDS) {
+    (updated as Record<string, unknown>)[field] = base[field];
+  }
+  if (updated.ataques[0]) {
+    updated.ataques = [
+      { ...updated.ataques[0], dano: base.danoSugerido },
+      ...updated.ataques.slice(1),
+    ];
+  }
+
+  form.reset(updated, { keepDefaultValues: true });
+
+  for (const field of TARGET_FIELDS) {
+    form.setValue(field, base[field] as never, {
+      shouldDirty: true,
+      shouldValidate: false,
+    });
+  }
+  if (updated.ataques[0]) {
+    form.setValue('ataques.0.dano', base.danoSugerido, {
+      shouldDirty: true,
+      shouldValidate: false,
+    });
   }
 }

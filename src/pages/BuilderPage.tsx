@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -38,18 +38,31 @@ export function BuilderPage() {
   });
 
   const [lastSavedId, setLastSavedId] = useState<string | null>(id ?? null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const preview = form.watch();
   const previewRef = useRef<HTMLDivElement>(null);
   const exportRef = useRef<HTMLDivElement>(null);
   const [exporting, setExporting] = useState<string | null>(null);
 
   const onSubmit = (data: Adversary) => {
+    setSaveError(null);
     const saved = upsert(data);
     setLastSavedId(saved.id);
     if (!id) {
       navigate(`/edit/${saved.id}`, { replace: true });
     }
   };
+
+  const onInvalid = useCallback(() => {
+    setSaveError('Não foi possível salvar — corrija os campos destacados.');
+    const firstError = document.querySelector<HTMLElement>(
+      '#adversary-form [aria-invalid="true"], #adversary-form .border-red-600',
+    );
+    if (firstError) {
+      firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      firstError.focus?.();
+    }
+  }, []);
 
   const exportTargetNode = () => exportRef.current ?? previewRef.current;
 
@@ -108,8 +121,14 @@ export function BuilderPage() {
         </p>
       ) : null}
 
+      {saveError ? (
+        <p className="mb-3 rounded border border-red-800/30 bg-red-50 px-3 py-2 text-sm text-red-900">
+          {saveError}
+        </p>
+      ) : null}
+
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_470px]">
-        <AdversaryForm form={form} onSubmit={onSubmit} />
+        <AdversaryForm form={form} onSubmit={onSubmit} onInvalid={onInvalid} />
 
         <aside className="lg:sticky lg:top-6 lg:self-start">
           <h2 className="field-label mb-2">Preview</h2>

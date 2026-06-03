@@ -1,6 +1,7 @@
 import type { Adversary } from '@/types/adversary';
 import type { EncounterEntry } from '@/types/encounter';
 import { BESTIARIO, findBestiarioEntry } from '@/data/bestiario';
+import { normalizeSearch } from '@/lib/normalize';
 
 export interface AdversarySearchResult {
   adversary: Adversary;
@@ -28,7 +29,7 @@ export function searchAdversaries(
   options: SearchOptions = {},
 ): AdversarySearchResult[] {
   const { query, origem = 'todos', tipo, patamar } = options;
-  const q = query?.trim().toLowerCase() ?? '';
+  const q = normalizeSearch(query?.trim() ?? '');
 
   const fromLibrary: AdversarySearchResult[] =
     origem === 'bestiario'
@@ -46,7 +47,9 @@ export function searchAdversaries(
     if (tipo && adversary.tipo !== tipo) return false;
     if (patamar && adversary.patamar !== patamar) return false;
     if (!q) return true;
-    const haystack = `${adversary.nome} ${adversary.descricao ?? ''} ${adversary.motivacoes?.join(' ') ?? ''}`.toLowerCase();
+    const haystack = normalizeSearch(
+      `${adversary.nome} ${adversary.descricao ?? ''} ${adversary.motivacoes?.join(' ') ?? ''}`,
+    );
     return haystack.includes(q);
   });
 }

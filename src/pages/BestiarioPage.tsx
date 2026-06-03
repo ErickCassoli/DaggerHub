@@ -11,6 +11,7 @@ import { PATAMARES } from '@/data/patamares';
 import { reTierAdversary } from '@/data/baselines';
 import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
 import { cloneBestiarioToLibrary } from '@/lib/adversarySources';
+import { normalizeSearch } from '@/lib/normalize';
 import type { Adversary, Patamar, Tipo } from '@/types/adversary';
 
 const PAGE_SIZE = 10;
@@ -24,12 +25,12 @@ export function BestiarioPage() {
   const [page, setPage] = useState(1);
 
   const results = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = normalizeSearch(query.trim());
     return BESTIARIO.filter((adv) => {
       if (tipo && adv.tipo !== tipo) return false;
       if (patamar && adv.patamar !== patamar) return false;
       if (!q) return true;
-      const hay = `${adv.nome} ${adv.descricao ?? ''}`.toLowerCase();
+      const hay = normalizeSearch(`${adv.nome} ${adv.descricao ?? ''}`);
       return hay.includes(q);
     });
   }, [query, tipo, patamar]);
