@@ -8,9 +8,10 @@ import { Button } from '@/components/ui/Button';
 import { BESTIARIO } from '@/data/bestiario';
 import { TIPOS } from '@/data/tipos';
 import { PATAMARES } from '@/data/patamares';
+import { reTierAdversary } from '@/data/baselines';
 import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
 import { cloneBestiarioToLibrary } from '@/lib/adversarySources';
-import type { Patamar, Tipo } from '@/types/adversary';
+import type { Adversary, Patamar, Tipo } from '@/types/adversary';
 
 const PAGE_SIZE = 10;
 
@@ -52,6 +53,22 @@ export function BestiarioPage() {
     const source = BESTIARIO.find((a) => a.id === id);
     if (!source) return;
     const copy = cloneBestiarioToLibrary(source, nanoid(10));
+    importOne(copy);
+    setToast(`"${copy.nome}" copiada para sua biblioteca.`);
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const onCopyAsTier = (id: string, newPatamar: Patamar) => {
+    const source = BESTIARIO.find((a) => a.id === id);
+    if (!source) return;
+    const now = new Date().toISOString();
+    const copy: Adversary = {
+      ...reTierAdversary(source, newPatamar),
+      id: nanoid(10),
+      nome: `${source.nome} (Patamar ${newPatamar})`,
+      criadoEm: now,
+      atualizadoEm: now,
+    };
     importOne(copy);
     setToast(`"${copy.nome}" copiada para sua biblioteca.`);
     setTimeout(() => setToast(null), 3000);
@@ -121,7 +138,12 @@ export function BestiarioPage() {
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-[repeat(auto-fill,minmax(450px,1fr))]">
             {pageItems.map((adv) => (
-              <BestiarioCard key={adv.id} adversary={adv} onCopy={() => onCopy(adv.id)} />
+              <BestiarioCard
+                key={adv.id}
+                adversary={adv}
+                onCopy={() => onCopy(adv.id)}
+                onCopyAsTier={(newPatamar) => onCopyAsTier(adv.id, newPatamar)}
+              />
             ))}
           </div>
 

@@ -1,4 +1,4 @@
-import type { Adversary } from '@/types/adversary';
+import type { Adversary, Patamar } from '@/types/adversary';
 import { AdversaryCard } from './AdversaryCard';
 
 interface LibraryGridProps {
@@ -6,9 +6,10 @@ interface LibraryGridProps {
   onDuplicate: (id: string) => void;
   onDelete: (id: string) => void;
   onExportJson: (adv: Adversary) => void;
+  onReTier: (id: string, newPatamar: Patamar) => void;
 }
 
-export function LibraryGrid({ items, onDuplicate, onDelete, onExportJson }: LibraryGridProps) {
+export function LibraryGrid({ items, onDuplicate, onDelete, onExportJson, onReTier }: LibraryGridProps) {
   if (items.length === 0) {
     return (
       <div className="rounded-md border border-dashed border-ink/30 bg-white/40 p-8 text-center">
@@ -27,6 +28,7 @@ export function LibraryGrid({ items, onDuplicate, onDelete, onExportJson }: Libr
           onDuplicate={() => onDuplicate(adv.id)}
           onDelete={() => onDelete(adv.id)}
           onExportJson={() => onExportJson(adv)}
+          onReTier={(newPatamar) => onReTier(adv.id, newPatamar)}
         />
       ))}
     </div>

@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
-import type { Adversary, LibraryStore } from '@/types/adversary';
+import type { Adversary, LibraryStore, Patamar } from '@/types/adversary';
 import { loadStore, removeAdversary, saveStore, upsertAdversary } from '@/lib/storage';
+import { reTierAdversary } from '@/data/baselines';
 
 export function useAdversaryLibrary() {
   const [store, setStore] = useState<LibraryStore>(() => loadStore());
@@ -58,5 +59,20 @@ export function useAdversaryLibrary() {
     });
   }, []);
 
-  return { items: store.items, list, get, upsert, remove, duplicate, importOne };
+  const reTier = useCallback((id: string, newPatamar: Patamar) => {
+    const original = store.items.find((i) => i.id === id);
+    if (!original) return undefined;
+    const now = new Date().toISOString();
+    const copy: Adversary = {
+      ...reTierAdversary(original, newPatamar),
+      id: nanoid(10),
+      nome: `${original.nome} (Patamar ${newPatamar})`,
+      criadoEm: now,
+      atualizadoEm: now,
+    };
+    setStore((s) => upsertAdversary(s, copy));
+    return copy;
+  }, [store.items]);
+
+  return { items: store.items, list, get, upsert, remove, duplicate, importOne, reTier };
 }

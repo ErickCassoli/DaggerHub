@@ -1,4 +1,4 @@
-import type { Patamar, Tipo } from '@/types/adversary';
+import type { Adversary, Patamar, Tipo } from '@/types/adversary';
 
 export interface Baseline {
   dificuldade: number;
@@ -90,4 +90,28 @@ export const TIER_BASELINES: Record<Patamar, Record<Tipo, Baseline>> = {
 
 export function getBaseline(patamar: Patamar, tipo: Tipo): Baseline {
   return TIER_BASELINES[patamar][tipo];
+}
+
+/**
+ * Returns a copy of the adversary with combat stats replaced by those of the target
+ * patamar baseline. Narrative fields (nome, descricao, motivacoes, habilidades,
+ * experiencias) are preserved. Only the first attack's damage is updated; additional
+ * attacks keep their original values.
+ */
+export function reTierAdversary(adv: Adversary, newPatamar: Patamar): Adversary {
+  const baseline = TIER_BASELINES[newPatamar][adv.tipo];
+  return {
+    ...adv,
+    patamar: newPatamar,
+    dificuldade: baseline.dificuldade,
+    limiarMaior: baseline.limiarMaior,
+    limiarGrave: baseline.limiarGrave,
+    pv: baseline.pv,
+    pf: baseline.pf,
+    atq: baseline.atq,
+    ataques:
+      adv.ataques.length > 0
+        ? [{ ...adv.ataques[0], dano: baseline.danoSugerido }, ...adv.ataques.slice(1)]
+        : adv.ataques,
+  };
 }
