@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { nanoid } from 'nanoid';
 import { AppHeader } from '@/components/nav/AppHeader';
@@ -10,11 +10,14 @@ import { BudgetBar } from '@/components/encounter/BudgetBar';
 import { PartyConfig } from '@/components/encounter/PartyConfig';
 import { EntryRow } from '@/components/encounter/EntryRow';
 import { AddAdversaryModal } from '@/components/encounter/AddAdversaryModal';
+import { EncounterSummaryBlock } from '@/components/encounter/EncounterSummaryBlock';
+import type { SummaryEntry } from '@/components/encounter/EncounterSummaryBlock';
+import { StatsBlock } from '@/components/StatsBlock/StatsBlock';
 import { useEncounterLibrary } from '@/hooks/useEncounterLibrary';
 import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
 import { resolveAdversary } from '@/lib/adversarySources';
 import { balanceVerdict, calculateBudget, encounterCost } from '@/lib/encounter';
-import { exportEncounterJson } from '@/lib/encounterExport';
+import { exportEncounterJson, exportEncounterPdf } from '@/lib/encounterExport';
 import type { Encounter, EncounterEntry } from '@/types/encounter';
 
 function blankEncounter(): Encounter {
@@ -48,6 +51,10 @@ export function EncounterBuilderPage() {
   const [encounter, setEncounter] = useState<Encounter>(initial);
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
+
+  const summaryExportRef = useRef<HTMLDivElement>(null);
+  const blockNodesRef = useRef<Map<string, HTMLDivElement>>(new Map());
 
   useEffect(() => {
     if (id && !get(id)) {
@@ -62,6 +69,31 @@ export function EncounterBuilderPage() {
     encounter.party,
   );
   const verdict = balanceVerdict(budget, costBreakdown.total);
+
+  const summaryEntries = useMemo<SummaryEntry[]>(
+    () =>
+      costBreakdown.porEntry
+        .filter((p): p is typeof p & { adversary: NonNullable<typeof p.adversary> } => !!p.adversary)
+        .map((p) => ({
+          adversary: p.adversary,
+          quantidade: encounter.entries.find((e) => e.id === p.entryId)?.quantidade ?? 1,
+          custo: p.custo,
+        })),
+    [costBreakdown, encounter.entries],
+  );
+
+  const doExportPdf = async () => {
+    if (!summaryExportRef.current) return;
+    const blockNodes = encounter.entries
+      .map((e) => blockNodesRef.current.get(e.id))
+      .filter((n): n is HTMLDivElement => n !== undefined);
+    try {
+      setExporting(true);
+      await exportEncounterPdf(summaryExportRef.current, blockNodes, encounter.nome);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const save = () => {
     const saved = upsert(encounter);
@@ -113,6 +145,14 @@ export function EncounterBuilderPage() {
           <>
             <Link to="/encounters" className="text-sm text-ink/70 underline">← Encontros</Link>
             <Button type="button" variant="primary" onClick={save}>Salvar</Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={doExportPdf}
+              disabled={exporting || encounter.entries.length === 0}
+            >
+              {exporting ? 'PDF…' : 'PDF'}
+            </Button>
             <Button type="button" variant="secondary" onClick={() => exportEncounterJson(encounter)}>
               JSON
             </Button>
@@ -208,6 +248,31 @@ export function EncounterBuilderPage() {
         onClose={() => setModalOpen(false)}
         onPick={addEntry}
       />
+
+      {/* Off-screen nodes for PDF export */}
+      <div aria-hidden className="pointer-events-none absolute left-[-9999px] top-[-9999px]">
+        <EncounterSummaryBlock
+          ref={summaryExportRef}
+          encounter={encounter}
+          entries={summaryEntries}
+          budget={budget}
+          total={costBreakdown.total}
+          verdict={verdict}
+        />
+        {costBreakdown.porEntry.map((p) => {
+          if (!p.adversary) return null;
+          return (
+            <StatsBlock
+              key={p.entryId}
+              adversary={p.adversary}
+              ref={(el) => {
+                if (el) blockNodesRef.current.set(p.entryId, el);
+                else blockNodesRef.current.delete(p.entryId);
+              }}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }
