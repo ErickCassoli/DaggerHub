@@ -4,12 +4,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Color tokens (RGB triplets for Tailwind opacity support) ─────────────── */
 :root {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  color-scheme: light;
+  --color-parchment: 244 233 216;   /* #f4e9d8 */
+  --color-ink: 43 26 26;             /* #2b1a1a */
+  --color-gold: 163 128 46;          /* #a3802e */
+
+  /* Legacy CSS vars used in .divider-ornament and other CSS-only rules */
   --gold: #a3802e;
   --gold-light: #c9a84c;
   --ink: #2b1a1a;
+
+  --body-bg: #efe7d5;
+
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color-scheme: light;
+}
+
+html.dark {
+  --color-parchment: 30 26 22;       /* #1e1a16 — dark warm surface */
+  --color-ink: 232 217 192;          /* #e8d9c0 — warm cream text */
+  --color-gold: 201 168 76;          /* #c9a84c — brighter gold for dark bg */
+
+  --gold: #c9a84c;
+  --gold-light: #e0c070;
+  --ink: #e8d9c0;
+
+  --body-bg: #0f0d0b;
+
+  color-scheme: dark;
 }
 
 html, body, #root {
@@ -18,8 +41,8 @@ html, body, #root {
 
 body {
   margin: 0;
-  background: #efe7d5;
-  color: #2b1a1a;
+  background-color: var(--body-bg);
+  color: rgb(var(--color-ink));
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
 }
 
@@ -31,6 +54,11 @@ body {
   .card-warm {
     box-shadow: 0 10px 26px -10px rgba(58, 38, 16, 0.45),
                 inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+
+  .dark .card-warm {
+    box-shadow: 0 10px 26px -10px rgba(0, 0, 0, 0.65),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
 
   .divider-ornament {

@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/Button';
 import { QuickRefModal } from '@/components/QuickRef/QuickRefModal';
+import { applyTheme, getTheme, type Theme } from '@/lib/theme';
 
 interface AppHeaderProps {
   /** Slot opcional à direita: botões de ação específicos da página. */
@@ -21,6 +22,13 @@ const NAV = [
 
 export function AppHeader({ actions, subtitle }: AppHeaderProps) {
   const [refOpen, setRefOpen] = useState(false);
+  const [theme, setTheme] = useState<Theme>(getTheme);
+
+  const toggleTheme = () => {
+    const next: Theme = theme === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    setTheme(next);
+  };
 
   return (
     <>
@@ -56,6 +64,15 @@ export function AppHeader({ actions, subtitle }: AppHeaderProps) {
             title="Abrir painel de referência rápida do mestre"
           >
             Ref. Rápida
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Alternar para modo claro' : 'Alternar para modo escuro'}
+            aria-label={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
+          >
+            {theme === 'dark' ? '◑ Claro' : '◐ Escuro'}
           </Button>
           {actions}
         </div>

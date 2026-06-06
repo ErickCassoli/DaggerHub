@@ -30,7 +30,7 @@ export function EncountersPage() {
       />
 
       {items.length === 0 ? (
-        <div className="rounded-md border border-dashed border-ink/30 bg-white/40 p-8 text-center">
+        <div className="rounded-md border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-8 text-center">
           <p className="text-ink/70">Nenhum encontro salvo ainda.</p>
           <p className="mt-1 text-sm text-ink/60">Crie o primeiro no botão acima.</p>
         </div>
@@ -47,7 +47,7 @@ export function EncountersPage() {
             return (
               <li
                 key={enc.id}
-                className="flex flex-col justify-between rounded-md border border-ink/20 bg-white/60 p-4 shadow-sm"
+                className="flex flex-col justify-between rounded-md border border-ink/20 bg-white/60 dark:bg-white/5 p-4 shadow-sm"
               >
                 <div>
                   <h3 className="font-display text-lg uppercase tracking-wide text-ink">

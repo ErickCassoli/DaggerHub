@@ -40,7 +40,7 @@ export function QuickRefModal({ open, onClose }: QuickRefModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-2 sm:p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 dark:bg-black/60 p-2 sm:p-4"
       onClick={onClose}
     >
       <div
@@ -62,7 +62,7 @@ export function QuickRefModal({ open, onClose }: QuickRefModalProps) {
             <h3 className="mb-2 font-display text-xs uppercase tracking-wider text-ink/60">
               Orçamento de Batalha
             </h3>
-            <div className="rounded border border-ink/20 bg-white/40 px-4 py-3 text-center">
+            <div className="rounded border border-ink/20 bg-white/40 dark:bg-white/5 px-4 py-3 text-center">
               <p className="font-semibold text-ink">
                 PB = {BASE_POINTS_PER_PC} × nº de PCs + {BASE_POINTS_FLAT} + ajustes
               </p>
@@ -101,7 +101,7 @@ export function QuickRefModal({ open, onClose }: QuickRefModalProps) {
               {TIPO_ORDER.map((tipo) => (
                 <div
                   key={tipo}
-                  className="flex items-center justify-between rounded border border-ink/20 bg-white/40 px-3 py-1.5"
+                  className="flex items-center justify-between rounded border border-ink/20 bg-white/40 dark:bg-white/5 px-3 py-1.5"
                 >
                   <span className="text-sm text-ink">{TIPO_LABEL[tipo]}</span>
                   <span className="ml-2 font-mono font-semibold text-ink">
@@ -158,7 +158,7 @@ export function QuickRefModal({ open, onClose }: QuickRefModalProps) {
                   {TIPO_ORDER.map((tipo) => {
                     const b = baseline[tipo];
                     return (
-                      <tr key={tipo} className="border-b border-ink/10 hover:bg-white/30">
+                      <tr key={tipo} className="border-b border-ink/10 hover:bg-white/30 dark:hover:bg-white/5">
                         <td className="py-1.5 font-medium text-ink">{TIPO_LABEL[tipo]}</td>
                         <td className="py-1.5 text-center text-ink/80">{b.dificuldade}</td>
                         <td className="py-1.5 text-center text-ink/80">{b.pv}</td>
