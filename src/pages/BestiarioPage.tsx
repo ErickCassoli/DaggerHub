@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { nanoid } from 'nanoid';
+import clsx from 'clsx';
 import { AppHeader } from '@/components/nav/AppHeader';
 import { BestiarioCard } from '@/components/bestiario/BestiarioCard';
 import { Input } from '@/components/ui/Input';
@@ -10,6 +11,7 @@ import { TIPOS } from '@/data/tipos';
 import { PATAMARES } from '@/data/patamares';
 import { reTierAdversary } from '@/data/baselines';
 import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
+import { useBestiarioFavorites } from '@/hooks/useBestiarioFavorites';
 import { cloneBestiarioToLibrary } from '@/lib/adversarySources';
 import { normalizeSearch } from '@/lib/normalize';
 import type { Adversary, Patamar, Tipo } from '@/types/adversary';
@@ -18,28 +20,31 @@ const PAGE_SIZE = 10;
 
 export function BestiarioPage() {
   const { importOne } = useAdversaryLibrary();
+  const { favorites, toggle } = useBestiarioFavorites();
   const [query, setQuery] = useState('');
   const [tipo, setTipo] = useState<Tipo | ''>('');
   const [patamar, setPatamar] = useState<Patamar | ''>('');
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [page, setPage] = useState(1);
 
   const results = useMemo(() => {
     const q = normalizeSearch(query.trim());
     return BESTIARIO.filter((adv) => {
+      if (showFavoritesOnly && !favorites.has(adv.id)) return false;
       if (tipo && adv.tipo !== tipo) return false;
       if (patamar && adv.patamar !== patamar) return false;
       if (!q) return true;
       const hay = normalizeSearch(`${adv.nome} ${adv.descricao ?? ''}`);
       return hay.includes(q);
     });
-  }, [query, tipo, patamar]);
+  }, [query, tipo, patamar, showFavoritesOnly, favorites]);
 
   const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
 
   useEffect(() => {
     setPage(1);
-  }, [query, tipo, patamar]);
+  }, [query, tipo, patamar, showFavoritesOnly, favorites]);
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
@@ -85,7 +90,7 @@ export function BestiarioPage() {
     <div className="mx-auto max-w-6xl p-4 sm:p-6">
       <AppHeader subtitle="Bestiário oficial — Livro Básico pp.209–239" />
 
-      <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_200px_200px]">
+      <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_200px_200px]">
         <Input
           type="search"
           placeholder="Buscar por nome…"
@@ -112,6 +117,27 @@ export function BestiarioPage() {
         </Select>
       </div>
 
+      <div className="mb-4 flex items-center gap-3">
+        <button
+          onClick={() => setShowFavoritesOnly((v) => !v)}
+          aria-pressed={showFavoritesOnly}
+          className={clsx(
+            'flex items-center gap-1.5 rounded border px-3 py-1 text-sm font-semibold transition-colors',
+            showFavoritesOnly
+              ? 'border-gold bg-gold/20 text-amber-800'
+              : 'border-ink/30 bg-parchment text-ink/60 hover:border-gold/50 hover:text-ink/80',
+          )}
+        >
+          <span>{showFavoritesOnly ? '★' : '☆'}</span>
+          <span>Favoritos</span>
+          {favorites.size > 0 && (
+            <span className="rounded-full bg-ink/10 px-1.5 py-0.5 text-xs leading-none">
+              {favorites.size}
+            </span>
+          )}
+        </button>
+      </div>
+
       {toast ? (
         <p className="mb-3 rounded border border-green-800/30 bg-green-50 px-3 py-2 text-sm text-green-900">
           {toast}
@@ -128,7 +154,16 @@ export function BestiarioPage() {
         </div>
       ) : results.length === 0 ? (
         <div className="rounded-md border border-dashed border-ink/30 bg-white/40 p-8 text-center">
-          <p className="text-ink/70">Nenhuma adversária corresponde aos filtros.</p>
+          {showFavoritesOnly && favorites.size === 0 ? (
+            <>
+              <p className="text-ink/70">Nenhum favorito salvo ainda.</p>
+              <p className="mt-1 text-sm text-ink/60">
+                Use o botão ☆ em qualquer adversária para marcá-la como favorita.
+              </p>
+            </>
+          ) : (
+            <p className="text-ink/70">Nenhuma adversária corresponde aos filtros.</p>
+          )}
         </div>
       ) : (
         <>
@@ -142,6 +177,8 @@ export function BestiarioPage() {
               <div key={adv.id} className="mb-6 break-inside-avoid">
                 <BestiarioCard
                   adversary={adv}
+                  isFavorite={favorites.has(adv.id)}
+                  onToggleFavorite={() => toggle(adv.id)}
                   onCopy={() => onCopy(adv.id)}
                   onCopyAsTier={(newPatamar) => onCopyAsTier(adv.id, newPatamar)}
                 />
