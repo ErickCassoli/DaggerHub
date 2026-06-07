@@ -1,15 +1,22 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import type { Patamar } from '@/types/adversary';
+import type { Adversary, Patamar } from '@/types/adversary';
+import type { Encounter } from '@/types/encounter';
+import type { Ambiente } from '@/types/ambiente';
 import { Button } from '@/components/ui/Button';
 import { AppHeader } from '@/components/nav/AppHeader';
 import { LibraryGrid } from '@/components/library/LibraryGrid';
 import { ImportButton } from '@/components/library/ImportButton';
+import { BundleButtons } from '@/components/library/BundleButtons';
 import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
+import { useEncounterLibrary } from '@/hooks/useEncounterLibrary';
+import { useAmbienteLibrary } from '@/hooks/useAmbienteLibrary';
 import { exportJson } from '@/lib/export';
 
 export function LibraryPage() {
   const { items, remove, duplicate, importOne, reTier } = useAdversaryLibrary();
+  const { importOne: importEncounter } = useEncounterLibrary();
+  const { importOne: importAmbiente } = useAmbienteLibrary();
   const [toast, setToast] = useState<string | null>(null);
 
   const confirmDelete = (id: string) => {
@@ -26,12 +33,30 @@ export function LibraryPage() {
     }
   };
 
+  const handleBundleImport = (
+    adversarias: Adversary[],
+    encontros: Encounter[],
+    ambientes: Ambiente[],
+  ) => {
+    adversarias.forEach((a) => importOne(a));
+    encontros.forEach((e) => importEncounter(e));
+    ambientes.forEach((a) => importAmbiente(a));
+    const parts = [
+      adversarias.length > 0 ? `${adversarias.length} adversária${adversarias.length !== 1 ? 's' : ''}` : '',
+      encontros.length > 0 ? `${encontros.length} encontro${encontros.length !== 1 ? 's' : ''}` : '',
+      ambientes.length > 0 ? `${ambientes.length} ambiente${ambientes.length !== 1 ? 's' : ''}` : '',
+    ].filter(Boolean);
+    setToast(`Pacote importado: ${parts.join(', ')}.`);
+    setTimeout(() => setToast(null), 4000);
+  };
+
   return (
     <div className="mx-auto max-w-6xl p-4 sm:p-6">
       <AppHeader
         subtitle="Biblioteca do usuário — adversárias salvas localmente"
         actions={
           <>
+            <BundleButtons onImport={handleBundleImport} />
             <ImportButton onImport={importOne} />
             <Link to="/new">
               <Button>+ Nova adversária</Button>
