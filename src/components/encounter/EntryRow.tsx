@@ -15,8 +15,8 @@ interface EntryRowProps {
 export function EntryRow({ entry, adversary, custo, onChangeQty, onRemove }: EntryRowProps) {
   if (!adversary) {
     return (
-      <li className="flex items-center justify-between rounded border border-red-900/30 bg-red-50 px-3 py-2 text-sm">
-        <span className="text-red-900">
+      <li className="flex items-center justify-between rounded border border-red-900/30 bg-red-50 dark:bg-red-950/50 px-3 py-2 text-sm">
+        <span className="text-red-900 dark:text-red-300">
           Referência quebrada ({entry.origem}: {entry.adversaryRef})
         </span>
         <Button size="sm" variant="danger" onClick={onRemove}>Remover</Button>
@@ -25,7 +25,7 @@ export function EntryRow({ entry, adversary, custo, onChangeQty, onRemove }: Ent
   }
 
   return (
-    <li className="flex flex-wrap items-center gap-3 rounded border border-ink/20 bg-white/60 px-3 py-2">
+    <li className="flex flex-wrap items-center gap-3 rounded border border-ink/20 bg-white/60 dark:bg-white/5 px-3 py-2">
       <div className="min-w-0 flex-1 basis-full sm:basis-0">
         <p className="truncate font-semibold text-ink">
           {adversary.nome}

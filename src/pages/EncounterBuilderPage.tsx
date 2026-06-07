@@ -218,7 +218,7 @@ export function EncounterBuilderPage() {
             }
           >
             {encounter.entries.length === 0 ? (
-              <p className="rounded border border-dashed border-ink/30 bg-white/40 p-6 text-center text-sm text-ink/70">
+              <p className="rounded border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-6 text-center text-sm text-ink/70">
                 Adicione adversárias da sua biblioteca ou do bestiário oficial.
               </p>
             ) : (

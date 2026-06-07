@@ -30,7 +30,7 @@ export function AmbientesPage() {
       />
 
       {items.length === 0 ? (
-        <div className="rounded-md border border-dashed border-ink/30 bg-white/40 p-8 text-center">
+        <div className="rounded-md border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-8 text-center">
           <p className="text-ink/70">Nenhum ambiente salvo ainda.</p>
           <p className="mt-1 text-sm text-ink/60">Crie o primeiro no botão acima.</p>
         </div>

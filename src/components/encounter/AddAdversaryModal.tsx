@@ -38,7 +38,7 @@ export function AddAdversaryModal({ open, biblioteca, onClose, onPick }: AddAdve
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-2 sm:p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 dark:bg-black/60 p-2 sm:p-4">
       <div className="flex max-h-[calc(100vh-1rem)] w-full max-w-3xl flex-col rounded-md border border-ink/30 bg-parchment shadow-xl sm:max-h-[min(90vh,800px)]">
         <header className="flex items-center justify-between border-b border-ink/20 px-4 py-3">
           <h2 className="font-display text-lg uppercase tracking-wide text-ink">
@@ -81,7 +81,7 @@ export function AddAdversaryModal({ open, biblioteca, onClose, onPick }: AddAdve
 
         <div className="flex-1 overflow-y-auto p-4">
           {results.length === 0 ? (
-            <p className="rounded border border-dashed border-ink/30 bg-white/40 p-6 text-center text-sm text-ink/70">
+            <p className="rounded border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-6 text-center text-sm text-ink/70">
               Nada encontrado. {origem === 'bestiario' ? 'O bestiário oficial ainda não foi populado.' : 'Ajuste os filtros ou crie uma adversária na biblioteca.'}
             </p>
           ) : (
@@ -89,7 +89,7 @@ export function AddAdversaryModal({ open, biblioteca, onClose, onPick }: AddAdve
               {results.map(({ adversary, origem: resultOrigem }) => (
                 <li
                   key={`${resultOrigem}:${adversary.id}`}
-                  className="flex flex-wrap items-center gap-3 rounded border border-ink/20 bg-white/60 px-3 py-2"
+                  className="flex flex-wrap items-center gap-3 rounded border border-ink/20 bg-white/60 dark:bg-white/5 px-3 py-2"
                 >
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold text-ink">

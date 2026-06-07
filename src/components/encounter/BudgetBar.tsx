@@ -11,17 +11,17 @@ const VERDICT_STYLES: Record<BalanceVerdict, { bar: string; label: string; text:
   abaixo: {
     bar: 'bg-blue-600',
     label: 'Abaixo do orçamento',
-    text: 'text-blue-900',
+    text: 'text-blue-900 dark:text-blue-300',
   },
   equilibrado: {
     bar: 'bg-green-700',
     label: 'Equilibrado',
-    text: 'text-green-900',
+    text: 'text-green-900 dark:text-green-300',
   },
   acima: {
     bar: 'bg-red-700',
     label: 'Acima do orçamento',
-    text: 'text-red-900',
+    text: 'text-red-900 dark:text-red-300',
   },
 };
 
@@ -32,7 +32,7 @@ export function BudgetBar({ budget, total, verdict }: BudgetBarProps) {
   const remaining = budget - total;
 
   return (
-    <div className="rounded-md border border-ink/20 bg-white/70 p-4 shadow-sm">
+    <div className="rounded-md border border-ink/20 bg-white/70 dark:bg-white/5 p-4 shadow-sm">
       <div className="mb-2 flex items-baseline justify-between gap-2">
         <span className="font-display text-sm uppercase tracking-wide text-ink">
           Pontos de Batalha

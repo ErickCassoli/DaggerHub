@@ -41,7 +41,7 @@ export function LibraryPage() {
       />
 
       {toast ? (
-        <p className="mb-3 rounded border border-green-800/30 bg-green-50 px-3 py-2 text-sm text-green-900">
+        <p className="mb-3 rounded border border-green-800/30 bg-green-50 px-3 py-2 text-sm text-green-900 dark:border-green-700/30 dark:bg-green-950 dark:text-green-200">
           {toast}
         </p>
       ) : null}

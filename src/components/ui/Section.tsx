@@ -12,7 +12,7 @@ interface SectionProps {
 export function Section({ title, subtitle, defaultOpen = true, children, actions }: SectionProps) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <section className="card-warm rounded-md border border-ink/20 bg-white/60">
+    <section className="card-warm rounded-md border border-ink/20 bg-white/60 dark:bg-white/5">
       <header className="flex flex-wrap items-center justify-between gap-2 border-b border-ink/10 px-4 py-3">
         <button
           type="button"

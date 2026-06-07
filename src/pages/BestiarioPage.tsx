@@ -139,13 +139,13 @@ export function BestiarioPage() {
       </div>
 
       {toast ? (
-        <p className="mb-3 rounded border border-green-800/30 bg-green-50 px-3 py-2 text-sm text-green-900">
+        <p className="mb-3 rounded border border-green-800/30 bg-green-50 px-3 py-2 text-sm text-green-900 dark:border-green-700/30 dark:bg-green-950 dark:text-green-200">
           {toast}
         </p>
       ) : null}
 
       {BESTIARIO.length === 0 ? (
-        <div className="rounded-md border border-dashed border-ink/30 bg-white/40 p-8 text-center">
+        <div className="rounded-md border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-8 text-center">
           <p className="text-ink/70">O bestiário ainda não foi populado.</p>
           <p className="mt-1 text-sm text-ink/60">
             As adversárias do Livro Básico (pp.209–239) serão adicionadas aqui conforme o conteúdo
