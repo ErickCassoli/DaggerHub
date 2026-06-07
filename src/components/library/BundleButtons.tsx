@@ -57,7 +57,7 @@ export function BundleButtons({ onImport }: BundleButtonsProps) {
           Importar pacote
         </Button>
       </div>
-      {error ? <p className="text-xs text-red-800">{error}</p> : null}
+      {error ? <p className="text-xs text-red-800 dark:text-red-400">{error}</p> : null}
     </div>
   );
 }

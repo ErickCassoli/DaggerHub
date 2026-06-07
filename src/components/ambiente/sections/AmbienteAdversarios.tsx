@@ -69,7 +69,7 @@ export function AmbienteAdversarios() {
                       </p>
                     </>
                   ) : (
-                    <p className="text-sm text-red-900">
+                    <p className="text-sm text-red-900 dark:text-red-400">
                       Referência quebrada ({f.origem}: {f.adversaryRef})
                     </p>
                   )}
