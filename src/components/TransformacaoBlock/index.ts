@@ -1,0 +1,1 @@
+export { TransformacaoBlock } from './TransformacaoBlock';
