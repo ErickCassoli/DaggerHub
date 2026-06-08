@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import type { Adversary, Patamar } from '@/types/adversary';
 import type { Encounter } from '@/types/encounter';
 import type { Ambiente } from '@/types/ambiente';
@@ -8,16 +8,19 @@ import { AppHeader } from '@/components/nav/AppHeader';
 import { LibraryGrid } from '@/components/library/LibraryGrid';
 import { ImportButton } from '@/components/library/ImportButton';
 import { BundleButtons } from '@/components/library/BundleButtons';
+import { ConvertFrom5eModal } from '@/components/library/ConvertFrom5eModal';
 import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
 import { useEncounterLibrary } from '@/hooks/useEncounterLibrary';
 import { useAmbienteLibrary } from '@/hooks/useAmbienteLibrary';
 import { exportJson } from '@/lib/export';
 
 export function LibraryPage() {
+  const navigate = useNavigate();
   const { items, remove, duplicate, importOne, reTier } = useAdversaryLibrary();
   const { importOne: importEncounter } = useEncounterLibrary();
   const { importOne: importAmbiente } = useAmbienteLibrary();
   const [toast, setToast] = useState<string | null>(null);
+  const [convertOpen, setConvertOpen] = useState(false);
 
   const confirmDelete = (id: string) => {
     const adv = items.find((i) => i.id === id);
@@ -50,6 +53,11 @@ export function LibraryPage() {
     setTimeout(() => setToast(null), 4000);
   };
 
+  const handleConvert5e = (adversary: Adversary) => {
+    importOne(adversary);
+    navigate(`/edit/${adversary.id}`);
+  };
+
   return (
     <div className="mx-auto max-w-6xl p-4 sm:p-6">
       <AppHeader
@@ -58,6 +66,9 @@ export function LibraryPage() {
           <>
             <BundleButtons onImport={handleBundleImport} />
             <ImportButton onImport={importOne} />
+            <Button variant="secondary" onClick={() => setConvertOpen(true)}>
+              Converter de 5e
+            </Button>
             <Link to="/new">
               <Button>+ Nova adversária</Button>
             </Link>
@@ -77,6 +88,12 @@ export function LibraryPage() {
         onDelete={confirmDelete}
         onExportJson={(adv) => exportJson(adv)}
         onReTier={handleReTier}
+      />
+
+      <ConvertFrom5eModal
+        open={convertOpen}
+        onClose={() => setConvertOpen(false)}
+        onConvert={handleConvert5e}
       />
     </div>
   );
