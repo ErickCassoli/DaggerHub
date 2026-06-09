@@ -22,6 +22,14 @@ const AmbientesPage = lazy(() =>
 const AmbienteBuilderPage = lazy(() =>
   import('./pages/AmbienteBuilderPage').then((m) => ({ default: m.AmbienteBuilderPage })),
 );
+const TransformacoesPage = lazy(() =>
+  import('./pages/TransformacoesPage').then((m) => ({ default: m.TransformacoesPage })),
+);
+const TransformacaoBuilderPage = lazy(() =>
+  import('./pages/TransformacaoBuilderPage').then((m) => ({
+    default: m.TransformacaoBuilderPage,
+  })),
+);
 
 function PageLoading() {
   return (
@@ -97,6 +105,9 @@ export default function App() {
           <Route path="/ambientes" element={<AmbientesPage />} />
           <Route path="/ambientes/new" element={<AmbienteBuilderPage />} />
           <Route path="/ambientes/edit/:id" element={<AmbienteBuilderPage />} />
+          <Route path="/transformacoes" element={<TransformacoesPage />} />
+          <Route path="/transformacoes/new" element={<TransformacaoBuilderPage />} />
+          <Route path="/transformacoes/edit/:id" element={<TransformacaoBuilderPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

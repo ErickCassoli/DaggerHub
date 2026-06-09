@@ -18,6 +18,7 @@ const NAV = [
   { to: '/bestiario', label: 'Bestiário', end: false },
   { to: '/encounters', label: 'Encontros', end: false },
   { to: '/ambientes', label: 'Ambientes', end: false },
+  { to: '/transformacoes', label: 'Transformações', end: false },
 ];
 
 export function AppHeader({ actions, subtitle }: AppHeaderProps) {
