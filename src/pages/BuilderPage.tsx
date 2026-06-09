@@ -116,13 +116,13 @@ export function BuilderPage() {
       />
 
       {lastSavedId && !form.formState.isDirty ? (
-        <p className="mb-3 rounded border border-green-800/30 bg-green-50 px-3 py-2 text-sm text-green-900">
+        <p className="mb-3 rounded border border-green-800/30 bg-green-50 px-3 py-2 text-sm text-green-900 dark:border-green-700/30 dark:bg-green-950 dark:text-green-200">
           Salva no navegador (localStorage).
         </p>
       ) : null}
 
       {saveError ? (
-        <p className="mb-3 rounded border border-red-800/30 bg-red-50 px-3 py-2 text-sm text-red-900">
+        <p className="mb-3 rounded border border-red-800/30 bg-red-50 px-3 py-2 text-sm text-red-900 dark:border-red-700/30 dark:bg-red-950 dark:text-red-200">
           {saveError}
         </p>
       ) : null}

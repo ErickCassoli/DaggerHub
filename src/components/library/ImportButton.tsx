@@ -37,7 +37,7 @@ export function ImportButton({ onImport }: ImportButtonProps) {
       <Button type="button" variant="secondary" onClick={() => inputRef.current?.click()}>
         Importar JSON
       </Button>
-      {error ? <p className="mt-1 text-xs text-red-800">{error}</p> : null}
+      {error ? <p className="mt-1 text-xs text-red-800 dark:text-red-400">{error}</p> : null}
     </div>
   );
 }

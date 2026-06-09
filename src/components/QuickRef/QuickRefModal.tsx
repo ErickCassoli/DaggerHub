@@ -81,7 +81,9 @@ export function QuickRefModal({ open, onClose }: QuickRefModalProps) {
                     <td
                       className={clsx(
                         'py-1.5 text-center font-mono font-semibold',
-                        adj.delta > 0 ? 'text-green-800' : 'text-red-800',
+                        adj.delta > 0
+                          ? 'text-green-800 dark:text-green-400'
+                          : 'text-red-800 dark:text-red-400',
                       )}
                     >
                       {adj.delta > 0 ? `+${adj.delta}` : adj.delta}
