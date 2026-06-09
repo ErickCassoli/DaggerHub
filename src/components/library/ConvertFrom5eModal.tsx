@@ -37,7 +37,7 @@ export function ConvertFrom5eModal({ open, onClose, onConvert }: ConvertFrom5eMo
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-2 sm:p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 dark:bg-black/60 p-2 sm:p-4"
       onClick={handleClose}
     >
       <div
@@ -75,7 +75,7 @@ export function ConvertFrom5eModal({ open, onClose, onConvert }: ConvertFrom5eMo
           />
 
           {preview !== null && (
-            <div className="rounded border border-ink/20 bg-white/30 p-3">
+            <div className="rounded border border-ink/20 bg-white/30 dark:bg-white/5 p-3">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink/60">
                 Prévia da conversão
               </p>
@@ -145,7 +145,7 @@ export function ConvertFrom5eModal({ open, onClose, onConvert }: ConvertFrom5eMo
               {preview.warnings.length > 0 && (
                 <ul className="mt-3 space-y-1">
                   {preview.warnings.map((w, i) => (
-                    <li key={i} className="text-xs text-amber-800">
+                    <li key={i} className="text-xs text-amber-800 dark:text-amber-400">
                       ⚠ {w}
                     </li>
                   ))}
