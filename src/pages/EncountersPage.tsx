@@ -1,16 +1,23 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { nanoid } from 'nanoid';
 import { AppHeader } from '@/components/nav/AppHeader';
 import { Button } from '@/components/ui/Button';
+import { GeneratorModal } from '@/components/encounter/GeneratorModal';
 import { useEncounterLibrary } from '@/hooks/useEncounterLibrary';
 import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
 import { resolveAdversary } from '@/lib/adversarySources';
 import { calculateBudget, encounterCost, balanceVerdict } from '@/lib/encounter';
 import { exportEncounterJson } from '@/lib/encounterExport';
-import type { Encounter } from '@/types/encounter';
+import type { GeneratedEntry } from '@/lib/encounterGenerator';
+import type { Encounter, EncounterEntry } from '@/types/encounter';
+import type { Patamar } from '@/types/adversary';
 
 export function EncountersPage() {
-  const { items, remove, duplicate } = useEncounterLibrary();
+  const navigate = useNavigate();
+  const { items, remove, duplicate, upsert } = useEncounterLibrary();
   const { items: biblioteca } = useAdversaryLibrary();
+  const [generatorOpen, setGeneratorOpen] = useState(false);
 
   const confirmDelete = (enc: Encounter) => {
     if (confirm(`Excluir "${enc.nome || 'encontro'}"? Essa ação não pode ser desfeita.`)) {
@@ -18,14 +25,42 @@ export function EncountersPage() {
     }
   };
 
+  const handleGenerate = (numPC: number, patamar: Patamar, generated: GeneratedEntry[]) => {
+    const entries: EncounterEntry[] = generated.map((ge) => ({
+      id: nanoid(8),
+      adversaryRef: ge.adversaryRef,
+      origem: ge.origem,
+      quantidade: ge.quantidade,
+    }));
+    const nivelPC = patamar === 1 ? 1 : patamar === 2 ? 3 : patamar === 3 ? 6 : 9;
+    const saved = upsert({
+      id: nanoid(10),
+      nome: '',
+      descricao: '',
+      party: { numPC, nivelPC },
+      ajustes: [],
+      entries,
+      notas: '',
+      criadoEm: '',
+      atualizadoEm: '',
+    });
+    setGeneratorOpen(false);
+    navigate(`/encounters/edit/${saved.id}`);
+  };
+
   return (
     <div className="mx-auto max-w-6xl p-4 sm:p-6">
       <AppHeader
         subtitle="Construtor de encontros — Livro Básico p.197"
         actions={
-          <Link to="/encounters/new">
-            <Button>+ Novo encontro</Button>
-          </Link>
+          <>
+            <Button variant="secondary" onClick={() => setGeneratorOpen(true)}>
+              ✦ Gerar encontro
+            </Button>
+            <Link to="/encounters/new">
+              <Button>+ Novo encontro</Button>
+            </Link>
+          </>
         }
       />
 
@@ -83,6 +118,12 @@ export function EncountersPage() {
           })}
         </ul>
       )}
+
+      <GeneratorModal
+        open={generatorOpen}
+        onClose={() => setGeneratorOpen(false)}
+        onConfirm={handleGenerate}
+      />
     </div>
   );
 }
