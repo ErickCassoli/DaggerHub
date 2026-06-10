@@ -65,18 +65,18 @@ export const StatsBlock = forwardRef<HTMLDivElement, StatsBlockProps>(function S
     >
       <header>
         <h1
-          className="m-0 text-[1.4rem] font-black uppercase leading-[1.15] tracking-[-0.5px] text-[#1a1a1a]"
+          className="m-0 text-[22.4px] font-black uppercase leading-[1.15] tracking-[-0.5px] text-[#1a1a1a]"
           style={{ fontFamily: '"Cinzel", serif' }}
         >
           {nome || 'Nome da adversária'}
         </h1>
-        <p className="my-[2px] text-[0.95rem] font-bold italic">
+        <p className="my-[2px] text-[15.2px] font-bold italic">
           {tipoLinha}
         </p>
         {descricao ? (
-          <p className="my-[5px] text-[0.9rem] italic leading-[1.5]">{descricao}</p>
+          <p className="my-[5px] text-[14.4px] italic leading-[1.5]">{descricao}</p>
         ) : null}
-        <p className="mt-[5px] mb-[10px] text-[0.9rem] leading-[1.5]">
+        <p className="mt-[5px] mb-[10px] text-[14.4px] leading-[1.5]">
           <strong className="font-extrabold">Motivações e táticas:</strong>{' '}
           {motivacoes.length ? motivacoes.join(', ') : '—'}
         </p>
@@ -85,33 +85,33 @@ export const StatsBlock = forwardRef<HTMLDivElement, StatsBlockProps>(function S
       <section className="mb-[15px] overflow-hidden rounded border border-[#d1c8b4] bg-white/80">
         <div className="grid grid-cols-4 gap-0 border-b border-[#d1c8b4]">
           <div className="border-r border-[#d1c8b4] px-[8px] py-[6px] text-center">
-            <div className="text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-[#666]" style={{ fontFamily: '"Cinzel", serif' }}>
+            <div className="text-[9.6px] font-semibold uppercase tracking-[0.08em] text-[#666]" style={{ fontFamily: '"Cinzel", serif' }}>
               Dificuldade
             </div>
-            <div className="text-[1.2rem] font-bold text-[#a3802e]">{dificuldade}</div>
+            <div className="text-[19.2px] font-bold text-[#a3802e]">{dificuldade}</div>
           </div>
           <div className="border-r border-[#d1c8b4] px-[8px] py-[6px] text-center">
-            <div className="text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-[#666]" style={{ fontFamily: '"Cinzel", serif' }}>
+            <div className="text-[9.6px] font-semibold uppercase tracking-[0.08em] text-[#666]" style={{ fontFamily: '"Cinzel", serif' }}>
               Limiares
             </div>
-            <div className="text-[1rem] font-bold">{limiaresText}</div>
+            <div className="text-[16px] font-bold">{limiaresText}</div>
           </div>
           <div className="border-r border-[#d1c8b4] px-[8px] py-[6px] text-center">
-            <div className="text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-[#666]" style={{ fontFamily: '"Cinzel", serif' }}>
+            <div className="text-[9.6px] font-semibold uppercase tracking-[0.08em] text-[#666]" style={{ fontFamily: '"Cinzel", serif' }}>
               PV
             </div>
-            <div className="text-[1.2rem] font-bold text-[#a3802e]">{pv}</div>
+            <div className="text-[19.2px] font-bold text-[#a3802e]">{pv}</div>
           </div>
           <div className="px-[8px] py-[6px] text-center">
-            <div className="text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-[#666]" style={{ fontFamily: '"Cinzel", serif' }}>
+            <div className="text-[9.6px] font-semibold uppercase tracking-[0.08em] text-[#666]" style={{ fontFamily: '"Cinzel", serif' }}>
               PF
             </div>
-            <div className="text-[1.2rem] font-bold text-[#a3802e]">{pf}</div>
+            <div className="text-[19.2px] font-bold text-[#a3802e]">{pf}</div>
           </div>
         </div>
 
         <div
-          className={`flex flex-wrap gap-[10px] px-[10px] py-[6px] text-[0.9rem] leading-[1.5] ${
+          className={`flex flex-wrap gap-[10px] px-[10px] py-[6px] text-[14.4px] leading-[1.5] ${
             experiencias.length > 0
               ? 'border-b border-dotted border-[#d1c8b4]'
               : ''
@@ -131,7 +131,7 @@ export const StatsBlock = forwardRef<HTMLDivElement, StatsBlockProps>(function S
         </div>
 
         {experiencias.length > 0 ? (
-          <div className="flex flex-wrap gap-[10px] px-[10px] py-[6px] text-[0.9rem] leading-[1.5]">
+          <div className="flex flex-wrap gap-[10px] px-[10px] py-[6px] text-[14.4px] leading-[1.5]">
             <span>
               <strong className="font-extrabold">{experienciaLabel}:</strong>{' '}
               {experiencias.map((e, i) => (
@@ -149,11 +149,11 @@ export const StatsBlock = forwardRef<HTMLDivElement, StatsBlockProps>(function S
         <section>
           <div className="mb-[8px] flex items-center gap-[8px]" style={{ color: '#a3802e' }}>
             <span style={{ flex: 1, height: '1px', background: 'linear-gradient(to right, transparent, #a3802e)' }} />
-            <span className="text-[0.6rem]">◆</span>
+            <span className="text-[9.6px]">◆</span>
             <span style={{ flex: 1, height: '1px', background: 'linear-gradient(to left, transparent, #a3802e)' }} />
           </div>
           <h2
-            className="mb-[8px] text-center text-[0.75rem] font-bold uppercase tracking-[0.15em] text-[#1a1a1a]"
+            className="mb-[8px] text-center text-[12px] font-bold uppercase tracking-[0.15em] text-[#1a1a1a]"
             style={{ fontFamily: '"Cinzel", serif', fontVariant: 'small-caps' }}
           >
             Habilidades

@@ -3,13 +3,23 @@ import { AdversaryCard } from './AdversaryCard';
 
 interface LibraryGridProps {
   items: Adversary[];
+  favorites: Set<string>;
+  onToggleFavorite: (id: string) => void;
   onDuplicate: (id: string) => void;
   onDelete: (id: string) => void;
   onExportJson: (adv: Adversary) => void;
   onReTier: (id: string, newPatamar: Patamar) => void;
 }
 
-export function LibraryGrid({ items, onDuplicate, onDelete, onExportJson, onReTier }: LibraryGridProps) {
+export function LibraryGrid({
+  items,
+  favorites,
+  onToggleFavorite,
+  onDuplicate,
+  onDelete,
+  onExportJson,
+  onReTier,
+}: LibraryGridProps) {
   if (items.length === 0) {
     return (
       <div className="rounded-md border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-8 text-center">
@@ -25,6 +35,8 @@ export function LibraryGrid({ items, onDuplicate, onDelete, onExportJson, onReTi
         <div key={adv.id} className="mb-6 break-inside-avoid">
           <AdversaryCard
             adversary={adv}
+            isFavorite={favorites.has(adv.id)}
+            onToggleFavorite={() => onToggleFavorite(adv.id)}
             onDuplicate={() => onDuplicate(adv.id)}
             onDelete={() => onDelete(adv.id)}
             onExportJson={() => onExportJson(adv)}

@@ -33,8 +33,9 @@ export function AppHeader({ actions, subtitle }: AppHeaderProps) {
 
   return (
     <>
-      <header className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-ink/20 pb-4">
-        <div className="min-w-0">
+      <header className="mb-6 border-b border-ink/20 pb-4">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="min-w-0">
           <h1 className="font-display text-2xl uppercase tracking-wider text-ink sm:text-3xl">DaggerHub</h1>
           <p className="text-sm text-ink/70">{subtitle ?? 'Gerador de stat blocks — Daggerheart (pt-BR)'}</p>
           <nav className="mt-3 flex flex-wrap gap-1 text-sm">
@@ -56,27 +57,30 @@ export function AppHeader({ actions, subtitle }: AppHeaderProps) {
               </NavLink>
             ))}
           </nav>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => setRefOpen(true)}
+              title="Abrir painel de referência rápida do mestre"
+            >
+              Ref. Rápida
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={toggleTheme}
+              title={theme === 'dark' ? 'Alternar para modo claro' : 'Alternar para modo escuro'}
+              aria-label={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
+            >
+              {theme === 'dark' ? '◑ Claro' : '◐ Escuro'}
+            </Button>
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => setRefOpen(true)}
-            title="Abrir painel de referência rápida do mestre"
-          >
-            Ref. Rápida
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={toggleTheme}
-            title={theme === 'dark' ? 'Alternar para modo claro' : 'Alternar para modo escuro'}
-            aria-label={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
-          >
-            {theme === 'dark' ? '◑ Claro' : '◐ Escuro'}
-          </Button>
-          {actions}
-        </div>
+        {actions ? (
+          <div className="mt-3 flex flex-wrap items-center justify-end gap-2">{actions}</div>
+        ) : null}
       </header>
       <QuickRefModal open={refOpen} onClose={() => setRefOpen(false)} />
     </>
