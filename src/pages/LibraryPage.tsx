@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
-import type { Adversary, Patamar } from '@/types/adversary';
+import type { Adversary, Patamar, Tipo } from '@/types/adversary';
 import type { Encounter } from '@/types/encounter';
 import type { Ambiente } from '@/types/ambiente';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { AppHeader } from '@/components/nav/AppHeader';
 import { LibraryGrid } from '@/components/library/LibraryGrid';
 import { ImportButton } from '@/components/library/ImportButton';
@@ -16,6 +18,41 @@ import { useEncounterLibrary } from '@/hooks/useEncounterLibrary';
 import { useAmbienteLibrary } from '@/hooks/useAmbienteLibrary';
 import { useLibraryFavorites } from '@/hooks/useLibraryFavorites';
 import { exportJson } from '@/lib/export';
+import { TIPOS } from '@/data/tipos';
+import { PATAMARES } from '@/data/patamares';
+import { normalizeSearch } from '@/lib/normalize';
+
+function FilterChip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      aria-pressed={active}
+      className={clsx(
+        'rounded border px-2.5 py-0.5 text-sm font-semibold transition-colors',
+        active
+          ? 'border-gold bg-gold/20 text-amber-800'
+          : 'border-ink/30 bg-parchment text-ink/60 hover:border-gold/50 hover:text-ink/80',
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+function toggleSet<T>(set: Set<T>, value: T): Set<T> {
+  const next = new Set(set);
+  if (next.has(value)) next.delete(value);
+  else next.add(value);
+  return next;
+}
 
 export function LibraryPage() {
   const navigate = useNavigate();
@@ -24,6 +61,9 @@ export function LibraryPage() {
   const { importOne: importAmbiente } = useAmbienteLibrary();
   const { favorites, toggle } = useLibraryFavorites();
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [query, setQuery] = useState('');
+  const [selectedTipos, setSelectedTipos] = useState<Set<Tipo>>(new Set());
+  const [selectedPatamares, setSelectedPatamares] = useState<Set<Patamar>>(new Set());
   const [toast, setToast] = useState<string | null>(null);
   const [convertOpen, setConvertOpen] = useState(false);
 
@@ -31,7 +71,20 @@ export function LibraryPage() {
     () => items.filter((i) => favorites.has(i.id)),
     [items, favorites],
   );
-  const visibleItems = showFavoritesOnly ? favoriteItems : items;
+
+  const filteredItems = useMemo(() => {
+    const q = normalizeSearch(query.trim());
+    const base = showFavoritesOnly ? favoriteItems : items;
+    return base.filter((adv) => {
+      if (selectedTipos.size > 0 && !selectedTipos.has(adv.tipo)) return false;
+      if (selectedPatamares.size > 0 && !selectedPatamares.has(adv.patamar)) return false;
+      if (!q) return true;
+      return normalizeSearch(`${adv.nome} ${adv.descricao ?? ''}`).includes(q);
+    });
+  }, [items, favoriteItems, showFavoritesOnly, query, selectedTipos, selectedPatamares]);
+
+  const hasActiveFilters =
+    query.trim() !== '' || selectedTipos.size > 0 || selectedPatamares.size > 0;
 
   const confirmDelete = (id: string) => {
     const adv = items.find((i) => i.id === id);
@@ -65,8 +118,6 @@ export function LibraryPage() {
   };
 
   const handleConvert5e = (adversary: Adversary) => {
-    // importOne pode re-gerar o id em caso de colisão — navega pelo item
-    // efetivamente salvo.
     const added = importOne(adversary);
     navigate(`/edit/${added.id}`);
   };
@@ -88,6 +139,53 @@ export function LibraryPage() {
           </>
         }
       />
+
+      <div className="mb-3">
+        <Input
+          type="search"
+          placeholder="Buscar por nome…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
+
+      <div className="mb-2 flex flex-wrap items-center gap-1.5">
+        <span className="field-label mr-1">Tipo:</span>
+        {TIPOS.map((t) => (
+          <FilterChip
+            key={t.value}
+            active={selectedTipos.has(t.value)}
+            onClick={() => setSelectedTipos((prev) => toggleSet(prev, t.value))}
+          >
+            {t.label}
+          </FilterChip>
+        ))}
+      </div>
+
+      <div className="mb-3 flex flex-wrap items-center gap-1.5">
+        <span className="field-label mr-1">Patamar:</span>
+        {PATAMARES.map((p) => (
+          <FilterChip
+            key={p.value}
+            active={selectedPatamares.has(p.value)}
+            onClick={() => setSelectedPatamares((prev) => toggleSet(prev, p.value))}
+          >
+            {p.label}
+          </FilterChip>
+        ))}
+        {hasActiveFilters ? (
+          <button
+            onClick={() => {
+              setQuery('');
+              setSelectedTipos(new Set());
+              setSelectedPatamares(new Set());
+            }}
+            className="ml-1 text-sm text-ink/60 underline hover:text-ink/80"
+          >
+            Limpar filtros
+          </button>
+        ) : null}
+      </div>
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <button
@@ -117,16 +215,20 @@ export function LibraryPage() {
         </p>
       ) : null}
 
-      {showFavoritesOnly && visibleItems.length === 0 ? (
+      {showFavoritesOnly && favoriteItems.length === 0 ? (
         <div className="rounded-md border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-8 text-center">
           <p className="text-ink/70">Nenhum favorito salvo ainda.</p>
           <p className="mt-1 text-sm text-ink/60">
             Use o botão ☆ em qualquer adversária para marcá-la como favorita.
           </p>
         </div>
+      ) : filteredItems.length === 0 && items.length > 0 ? (
+        <div className="rounded-md border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-8 text-center">
+          <p className="text-ink/70">Nenhuma adversária corresponde aos filtros.</p>
+        </div>
       ) : (
         <LibraryGrid
-          items={visibleItems}
+          items={filteredItems}
           favorites={favorites}
           onToggleFavorite={toggle}
           onDuplicate={(id) => duplicate(id)}
