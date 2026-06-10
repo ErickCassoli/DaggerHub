@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import type { Adversary, Patamar } from '@/types/adversary';
 import { Button } from '@/components/ui/Button';
 import { StatsBlock } from '@/components/StatsBlock/StatsBlock';
+import { FitBlock } from '@/components/StatsBlock/FitBlock';
 import { PATAMARES } from '@/data/patamares';
 
 interface AdversaryCardProps {
@@ -15,9 +16,9 @@ interface AdversaryCardProps {
 export function AdversaryCard({ adversary, onDuplicate, onDelete, onExportJson, onReTier }: AdversaryCardProps) {
   return (
     <article className="flex w-full flex-col items-center gap-3">
-      <div className="w-full max-w-[450px] overflow-x-auto">
+      <FitBlock>
         <StatsBlock adversary={adversary} />
-      </div>
+      </FitBlock>
 
       <div className="flex w-full max-w-[450px] flex-wrap items-center gap-2">
         <Link to={`/edit/${adversary.id}`}>
