@@ -23,19 +23,25 @@ export function BundleButtons({ onImport }: BundleButtonsProps) {
       return;
     }
 
-    const { adversarias, encontros, ambientes } = res;
+    const { adversarias, encontros, ambientes, descartados } = res;
     const parts = [
       adversarias.length > 0 ? `${adversarias.length} adversária${adversarias.length !== 1 ? 's' : ''}` : '',
       encontros.length > 0 ? `${encontros.length} encontro${encontros.length !== 1 ? 's' : ''}` : '',
       ambientes.length > 0 ? `${ambientes.length} ambiente${ambientes.length !== 1 ? 's' : ''}` : '',
     ].filter(Boolean);
 
-    const msg = `Importar ${parts.join(', ')}? IDs duplicados serão renomeados automaticamente.`;
+    if (parts.length === 0) {
+      setError(`Nenhum item válido no pacote (${descartados} inválido${descartados !== 1 ? 's' : ''}).`);
+      return;
+    }
+
+    const aviso = descartados > 0
+      ? ` ${descartados} item${descartados !== 1 ? 's' : ''} inválido${descartados !== 1 ? 's' : ''} será${descartados !== 1 ? 'ão' : ''} ignorado${descartados !== 1 ? 's' : ''}.`
+      : '';
+    const msg = `Importar ${parts.join(', ')}? IDs duplicados serão renomeados automaticamente.${aviso}`;
     if (!confirm(msg)) return;
 
     onImport(adversarias, encontros, ambientes);
-
-    if (inputRef.current) inputRef.current.value = '';
   };
 
   return (
@@ -50,7 +56,10 @@ export function BundleButtons({ onImport }: BundleButtonsProps) {
           accept="application/json"
           className="hidden"
           onChange={(e) => {
-            void onFile(e.target.files?.[0]);
+            const file = e.target.files?.[0];
+            // Limpa sempre: permite re-selecionar o mesmo arquivo após erro.
+            e.target.value = '';
+            void onFile(file);
           }}
         />
         <Button type="button" variant="secondary" onClick={() => inputRef.current?.click()}>

@@ -25,9 +25,12 @@ export const ambienteSchema = z.object({
   descricao: z.string().max(280).default(''),
   impulsos: z.array(z.string().min(1)).min(1, 'Inclua ao menos 1 impulso'),
   dificuldade: z.coerce.number().int().min(1).max(30),
-  potencialMedo: z
-    .union([z.coerce.number().int().min(0).max(20), z.literal('').transform(() => undefined)])
-    .optional(),
+  potencialMedo: z.preprocess(
+    // '' e null significam "não acompanha Medo" — sem isso o coerce
+    // transformaria null em 0 ao importar JSON.
+    (v) => (v === '' || v === null ? undefined : v),
+    z.coerce.number().int().min(0).max(20).optional(),
+  ),
   adversariosSugeridos: z.array(adversaryRefSchema),
   habilidades: z.array(featureSchema),
   caracteristicas: z.array(featureSchema),

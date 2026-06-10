@@ -31,6 +31,9 @@ export function FitBlock({ children }: { children: React.ReactNode }) {
     update();
     const ro = new ResizeObserver(update);
     ro.observe(wrap);
+    // O conteúdo (ex.: habilidades adicionadas no builder) muda de altura sem
+    // redimensionar o wrapper — observar o inner mantém o clipping correto.
+    ro.observe(inner);
     return () => ro.disconnect();
   }, []);
 

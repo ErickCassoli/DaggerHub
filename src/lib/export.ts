@@ -1,7 +1,7 @@
 import type { Adversary } from '@/types/adversary';
 import { adversarySchema } from '@/lib/schema';
 import { slugify } from '@/lib/slug';
-import { triggerDownload, nodeToPng } from '@/lib/exportUtils';
+import { downloadBlob, triggerDownload, nodeToPng } from '@/lib/exportUtils';
 
 export async function exportPng(node: HTMLElement, nome: string): Promise<void> {
   const { dataUrl } = await nodeToPng(node);
@@ -41,9 +41,7 @@ export async function exportAdversariesPdf(nodes: HTMLElement[], nome: string): 
 
 export function exportJson(adversary: Adversary): void {
   const blob = new Blob([JSON.stringify(adversary, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  triggerDownload(url, `${slugify(adversary.nome)}.json`);
-  URL.revokeObjectURL(url);
+  downloadBlob(blob, `${slugify(adversary.nome)}.json`);
 }
 
 export type JsonImportResult =

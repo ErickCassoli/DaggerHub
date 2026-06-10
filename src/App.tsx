@@ -1,5 +1,5 @@
-import { Component, lazy, Suspense, type ErrorInfo, type ReactNode } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Component, Fragment, lazy, Suspense, type ErrorInfo, type ReactNode } from 'react';
+import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 
 const LibraryPage = lazy(() =>
   import('./pages/LibraryPage').then((m) => ({ default: m.LibraryPage })),
@@ -30,6 +30,16 @@ const TransformacaoBuilderPage = lazy(() =>
     default: m.TransformacaoBuilderPage,
   })),
 );
+
+/**
+ * Remonta a página quando o `:id` da rota muda (ou entre `/new` e `/edit/:id`).
+ * Os builders inicializam o form apenas na montagem; sem isso, navegar de
+ * `/edit/:id` para `/new` manteria o registro carregado no form.
+ */
+function Keyed({ children }: { children: ReactNode }) {
+  const { id } = useParams();
+  return <Fragment key={id ?? 'new'}>{children}</Fragment>;
+}
 
 function PageLoading() {
   return (
@@ -96,18 +106,18 @@ export default function App() {
       <Suspense fallback={<PageLoading />}>
         <Routes>
           <Route path="/" element={<LibraryPage />} />
-          <Route path="/new" element={<BuilderPage />} />
-          <Route path="/edit/:id" element={<BuilderPage />} />
+          <Route path="/new" element={<Keyed><BuilderPage /></Keyed>} />
+          <Route path="/edit/:id" element={<Keyed><BuilderPage /></Keyed>} />
           <Route path="/bestiario" element={<BestiarioPage />} />
           <Route path="/encounters" element={<EncountersPage />} />
-          <Route path="/encounters/new" element={<EncounterBuilderPage />} />
-          <Route path="/encounters/edit/:id" element={<EncounterBuilderPage />} />
+          <Route path="/encounters/new" element={<Keyed><EncounterBuilderPage /></Keyed>} />
+          <Route path="/encounters/edit/:id" element={<Keyed><EncounterBuilderPage /></Keyed>} />
           <Route path="/ambientes" element={<AmbientesPage />} />
-          <Route path="/ambientes/new" element={<AmbienteBuilderPage />} />
-          <Route path="/ambientes/edit/:id" element={<AmbienteBuilderPage />} />
+          <Route path="/ambientes/new" element={<Keyed><AmbienteBuilderPage /></Keyed>} />
+          <Route path="/ambientes/edit/:id" element={<Keyed><AmbienteBuilderPage /></Keyed>} />
           <Route path="/transformacoes" element={<TransformacoesPage />} />
-          <Route path="/transformacoes/new" element={<TransformacaoBuilderPage />} />
-          <Route path="/transformacoes/edit/:id" element={<TransformacaoBuilderPage />} />
+          <Route path="/transformacoes/new" element={<Keyed><TransformacaoBuilderPage /></Keyed>} />
+          <Route path="/transformacoes/edit/:id" element={<Keyed><TransformacaoBuilderPage /></Keyed>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

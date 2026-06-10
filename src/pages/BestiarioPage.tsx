@@ -84,9 +84,11 @@ export function BestiarioPage() {
 
   const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
 
+  // `favorites` fica de fora: favoritar não deve resetar a paginação
+  // (o clamp abaixo cobre o caso da lista encolher no modo "só favoritas").
   useEffect(() => {
     setPage(1);
-  }, [query, tipos, patamares, showFavoritesOnly, favorites]);
+  }, [query, tipos, patamares, showFavoritesOnly]);
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);

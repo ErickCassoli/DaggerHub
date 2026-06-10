@@ -8,7 +8,7 @@ import { loadStore } from '@/lib/storage';
 import { loadEncounters } from '@/lib/encounterStorage';
 import { loadAmbientes } from '@/lib/ambienteStorage';
 import { slugify } from '@/lib/slug';
-import { triggerDownload } from '@/lib/exportUtils';
+import { downloadBlob } from '@/lib/exportUtils';
 
 export interface DaggerHubBundle {
   version: 1;
@@ -24,6 +24,8 @@ export type BundleImportResult =
       adversarias: Adversary[];
       encontros: Encounter[];
       ambientes: Ambiente[];
+      /** Itens que falharam na validação e foram ignorados. */
+      descartados: number;
     }
   | { ok: false; error: string };
 
@@ -41,10 +43,8 @@ export function exportBundle(): void {
   };
 
   const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
   const date = new Date().toISOString().slice(0, 10);
-  triggerDownload(url, `daggerhub-${slugify(date)}.json`);
-  URL.revokeObjectURL(url);
+  downloadBlob(blob, `daggerhub-${slugify(date)}.json`);
 }
 
 function isEncounterLike(v: unknown): v is Encounter {
@@ -138,5 +138,10 @@ export async function parseBundleImport(file: File): Promise<BundleImportResult>
     ambientes.push({ ...amb, id: newId, adversariosSugeridos });
   }
 
-  return { ok: true, adversarias, encontros, ambientes };
+  const descartados =
+    rawAdversarias.length - adversarias.length +
+    (rawEncontros.length - encontros.length) +
+    (rawAmbientes.length - ambientes.length);
+
+  return { ok: true, adversarias, encontros, ambientes, descartados };
 }

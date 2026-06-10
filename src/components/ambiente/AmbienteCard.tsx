@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import type { Ambiente } from '@/types/ambiente';
 import { Button } from '@/components/ui/Button';
 import { AmbienteBlock } from '@/components/AmbienteBlock/AmbienteBlock';
+import { FitBlock } from '@/components/StatsBlock/FitBlock';
 import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
 import { resolveAdversary } from '@/lib/adversarySources';
 
@@ -20,8 +21,10 @@ export function AmbienteCard({ ambiente, onDuplicate, onDelete, onExportJson }: 
 
   return (
     <article className="flex w-full flex-col items-center gap-3">
-      <div className="w-full max-w-[450px] overflow-x-auto">
-        <AmbienteBlock ambiente={ambiente} adversarios={adversarios} />
+      <div className="w-full max-w-[450px]">
+        <FitBlock>
+          <AmbienteBlock ambiente={ambiente} adversarios={adversarios} />
+        </FitBlock>
       </div>
 
       <div className="flex w-full max-w-[450px] flex-wrap items-center gap-2">

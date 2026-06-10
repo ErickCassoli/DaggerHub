@@ -32,7 +32,7 @@ export function PartyConfig({ party, ajustes, onPartyChange, onAjustesChange }: 
             min={1}
             max={8}
             value={party.numPC}
-            onChange={(e) => onPartyChange({ ...party, numPC: Number(e.target.value) || 0 })}
+            onChange={(e) => onPartyChange({ ...party, numPC: Number(e.target.value) || 1 })}
           />
         </label>
         <label className="block">

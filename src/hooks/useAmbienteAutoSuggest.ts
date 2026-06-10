@@ -15,10 +15,19 @@ const TARGET_FIELDS = ['dificuldade', 'potencialMedo'] as const;
 export function useAmbienteAutoSuggest(form: Form) {
   const patamar = form.watch('patamar');
   const last = useRef<Patamar | null>(null);
+  const mounted = useRef(false);
 
   useEffect(() => {
     if (!patamar) return;
     if (last.current === patamar) return;
+    // Primeira execução (montagem): os defaultValues já refletem o registro
+    // carregado ou o blankAmbiente() com baseline — não sobrescrever, senão
+    // editar um ambiente salvo resetaria dificuldade/potencialMedo.
+    if (!mounted.current) {
+      mounted.current = true;
+      last.current = patamar as Patamar;
+      return;
+    }
     last.current = patamar as Patamar;
 
     const base = getAmbienteBaseline(patamar as Patamar);

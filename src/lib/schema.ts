@@ -63,7 +63,10 @@ export const adversarySchema = z
       path: ['limiarGrave'],
       message: 'Grave deve ser maior que Maior',
     },
-  );
+  )
+  // hordaRatio só faz sentido para hordas — descarta resíduos de imports
+  // ou de trocas de tipo no formulário.
+  .transform((d) => (d.tipo === 'horda' ? d : { ...d, hordaRatio: undefined }));
 
 export type AdversaryInput = z.input<typeof adversarySchema>;
 export type AdversaryParsed = z.output<typeof adversarySchema>;

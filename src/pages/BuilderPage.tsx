@@ -49,6 +49,8 @@ export function BuilderPage() {
     setSaveError(null);
     const saved = upsert(data);
     setLastSavedId(saved.id);
+    // Marca o form como "limpo" para o banner de confirmação reaparecer.
+    form.reset(saved);
     if (!id) {
       navigate(`/edit/${saved.id}`, { replace: true });
     }

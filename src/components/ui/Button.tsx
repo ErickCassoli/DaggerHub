@@ -22,12 +22,13 @@ const sizeClasses: Record<Size, string> = {
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = 'primary', size = 'md', className, ...rest },
+  { variant = 'primary', size = 'md', type = 'button', className, ...rest },
   ref,
 ) {
   return (
     <button
       ref={ref}
+      type={type}
       className={clsx(
         'inline-flex items-center justify-center gap-2 rounded font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-50',
         variantClasses[variant],
