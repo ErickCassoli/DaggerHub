@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import type { Ambiente } from '@/types/ambiente';
 import { Section } from '@/components/ui/Section';
@@ -9,10 +10,22 @@ import { applyAmbienteBaselineOverride } from '@/hooks/useAmbienteAutoSuggest';
 export function AmbienteDetalhes() {
   const form = useFormContext<Ambiente>();
   const errors = form.formState.errors;
+  // Confirmação em duas etapas no próprio botão (sem window.confirm, que é
+  // bloqueante e se comporta de forma diferente entre browsers).
+  const [confirming, setConfirming] = useState(false);
+
+  useEffect(() => {
+    if (!confirming) return;
+    const t = setTimeout(() => setConfirming(false), 4000);
+    return () => clearTimeout(t);
+  }, [confirming]);
 
   const onReset = () => {
-    const ok = confirm('Sobrescrever Dificuldade e Potencial de Medo com os valores padrão do patamar?');
-    if (!ok) return;
+    if (!confirming) {
+      setConfirming(true);
+      return;
+    }
+    setConfirming(false);
     applyAmbienteBaselineOverride(form);
   };
 
@@ -21,8 +34,14 @@ export function AmbienteDetalhes() {
       title="Detalhes"
       subtitle="Dificuldade do ambiente e orçamento de Medo (auto-sugeridos pelo patamar)"
       actions={
-        <Button type="button" variant="secondary" size="sm" onClick={onReset}>
-          Aplicar padrões do patamar
+        <Button
+          type="button"
+          variant={confirming ? 'danger' : 'secondary'}
+          size="sm"
+          onClick={onReset}
+          title="Sobrescreve Dificuldade e Potencial de Medo com os valores padrão do patamar"
+        >
+          {confirming ? 'Confirmar sobrescrita?' : 'Aplicar padrões do patamar'}
         </Button>
       }
     >

@@ -36,17 +36,12 @@ export function applyAmbienteBaselineOverride(form: Form) {
   const values = form.getValues();
   const base = getAmbienteBaseline(values.patamar);
 
-  const updated = { ...values };
-  for (const field of TARGET_FIELDS) {
-    (updated as Record<string, unknown>)[field] = base[field];
-  }
-
-  form.reset(updated, { keepDefaultValues: true });
-
+  // Apenas setValue campo a campo (sem form.reset) — mesmo racional do
+  // applyBaselineOverride de adversárias.
   for (const field of TARGET_FIELDS) {
     form.setValue(field, base[field] as never, {
       shouldDirty: true,
-      shouldValidate: false,
+      shouldValidate: true,
     });
   }
 }

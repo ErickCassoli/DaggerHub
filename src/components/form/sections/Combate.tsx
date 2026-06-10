@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import type { Adversary } from '@/types/adversary';
 import { Section } from '@/components/ui/Section';
@@ -9,10 +10,22 @@ import { applyBaselineOverride } from '@/hooks/useAutoSuggest';
 export function Combate() {
   const form = useFormContext<Adversary>();
   const errors = form.formState.errors;
+  // Confirmação em duas etapas no próprio botão (sem window.confirm, que é
+  // bloqueante e se comporta de forma diferente entre browsers).
+  const [confirming, setConfirming] = useState(false);
+
+  useEffect(() => {
+    if (!confirming) return;
+    const t = setTimeout(() => setConfirming(false), 4000);
+    return () => clearTimeout(t);
+  }, [confirming]);
 
   const onReset = () => {
-    const ok = confirm('Sobrescrever Dificuldade, Limiares, PV, PF, ATQ e dano com os valores padrão do patamar?');
-    if (!ok) return;
+    if (!confirming) {
+      setConfirming(true);
+      return;
+    }
+    setConfirming(false);
     applyBaselineOverride(form);
   };
 
@@ -21,8 +34,14 @@ export function Combate() {
       title="Combate"
       subtitle="Valores auto-sugeridos pelo patamar/tipo; editáveis"
       actions={
-        <Button type="button" variant="secondary" size="sm" onClick={onReset}>
-          Aplicar padrões do patamar
+        <Button
+          type="button"
+          variant={confirming ? 'danger' : 'secondary'}
+          size="sm"
+          onClick={onReset}
+          title="Sobrescreve Dificuldade, Limiares, PV, PF, ATQ e dano com os valores padrão do patamar/tipo"
+        >
+          {confirming ? 'Confirmar sobrescrita?' : 'Aplicar padrões do patamar'}
         </Button>
       }
     >

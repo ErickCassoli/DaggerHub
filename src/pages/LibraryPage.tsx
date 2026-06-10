@@ -65,8 +65,10 @@ export function LibraryPage() {
   };
 
   const handleConvert5e = (adversary: Adversary) => {
-    importOne(adversary);
-    navigate(`/edit/${adversary.id}`);
+    // importOne pode re-gerar o id em caso de colisão — navega pelo item
+    // efetivamente salvo.
+    const added = importOne(adversary);
+    navigate(`/edit/${added.id}`);
   };
 
   return (
