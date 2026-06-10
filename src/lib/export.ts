@@ -16,6 +16,29 @@ export async function exportPdf(node: HTMLElement, nome: string): Promise<void> 
   doc.save(`${slugify(nome)}.pdf`);
 }
 
+/** Exporta vários stat blocks num único PDF (uma adversária por página). */
+export async function exportAdversariesPdf(nodes: HTMLElement[], nome: string): Promise<void> {
+  if (nodes.length === 0) return;
+  const images = await Promise.all(nodes.map((n) => nodeToPng(n)));
+  const { default: jsPDF } = await import('jspdf');
+
+  const first = images[0];
+  const doc = new jsPDF({
+    unit: 'pt',
+    format: [first.width, first.height],
+    orientation: first.width > first.height ? 'l' : 'p',
+  });
+  doc.addImage(first.dataUrl, 'PNG', 0, 0, first.width, first.height);
+
+  for (let i = 1; i < images.length; i++) {
+    const { dataUrl, width, height } = images[i];
+    doc.addPage([width, height], width > height ? 'l' : 'p');
+    doc.addImage(dataUrl, 'PNG', 0, 0, width, height);
+  }
+
+  doc.save(`${slugify(nome)}.pdf`);
+}
+
 export function exportJson(adversary: Adversary): void {
   const blob = new Blob([JSON.stringify(adversary, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);

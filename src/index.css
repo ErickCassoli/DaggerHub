@@ -35,6 +35,28 @@ html.dark {
   color-scheme: dark;
 }
 
+/* Fontes maiores no desktop (feedback da comunidade): a base de 16px fica
+   pequena para a Cormorant Garamond em monitores grandes. Como os containers
+   (max-w-*) e espaçamentos do Tailwind são em rem, o layout expande junto.
+   Os blocos de export (StatsBlock etc.) usam px fixos e não são afetados. */
+@media (min-width: 1024px) {
+  :root {
+    font-size: 17px;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 1760px) {
+  :root {
+    font-size: 20px;
+  }
+}
+
 html, body, #root {
   height: 100%;
 }

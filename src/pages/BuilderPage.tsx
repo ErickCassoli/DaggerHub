@@ -102,13 +102,30 @@ export function BuilderPage() {
             <Button type="submit" form="adversary-form" variant="primary">
               Salvar
             </Button>
-            <Button type="button" variant="secondary" onClick={doExportPng} disabled={!!exporting}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={doExportPng}
+              disabled={!!exporting}
+              title="Baixa o stat block como imagem PNG — ideal para compartilhar no Discord ou usar em VTTs"
+            >
               {exporting === 'png' ? 'Exportando…' : 'PNG'}
             </Button>
-            <Button type="button" variant="secondary" onClick={doExportPdf} disabled={!!exporting}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={doExportPdf}
+              disabled={!!exporting}
+              title="Baixa o stat block como PDF pronto para impressão"
+            >
               {exporting === 'pdf' ? 'Exportando…' : 'PDF'}
             </Button>
-            <Button type="button" variant="secondary" onClick={doExportJson}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={doExportJson}
+              title="Baixa os dados em JSON — serve de backup e pode ser importado em outro navegador"
+            >
               JSON
             </Button>
           </>

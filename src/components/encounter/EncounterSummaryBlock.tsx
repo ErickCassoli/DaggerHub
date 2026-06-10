@@ -53,16 +53,16 @@ export const EncounterSummaryBlock = forwardRef<HTMLDivElement, EncounterSummary
       >
         <header>
           <h1
-            className="m-0 text-[1.4rem] font-black uppercase leading-[1.15] tracking-[-0.5px] text-[#1a1a1a]"
+            className="m-0 text-[22.4px] font-black uppercase leading-[1.15] tracking-[-0.5px] text-[#1a1a1a]"
             style={{ fontFamily: '"Cinzel", serif' }}
           >
             {nome || 'Encontro sem nome'}
           </h1>
-          <p className="my-[2px] text-[0.95rem] font-bold italic">Encontro</p>
+          <p className="my-[2px] text-[15.2px] font-bold italic">Encontro</p>
           {descricao ? (
-            <p className="my-[5px] text-[0.9rem] italic leading-[1.5]">{descricao}</p>
+            <p className="my-[5px] text-[14.4px] italic leading-[1.5]">{descricao}</p>
           ) : null}
-          <p className="mt-[5px] mb-[10px] text-[0.9rem] leading-[1.5]">
+          <p className="mt-[5px] mb-[10px] text-[14.4px] leading-[1.5]">
             <strong className="font-extrabold">Grupo:</strong>{' '}
             {party.numPC} PCs · Nível {party.nivelPC}°
           </p>
@@ -73,31 +73,31 @@ export const EncounterSummaryBlock = forwardRef<HTMLDivElement, EncounterSummary
           <div className="grid grid-cols-3 gap-0 border-b border-[#d1c8b4]">
             <div className="border-r border-[#d1c8b4] px-[8px] py-[6px] text-center">
               <div
-                className="text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-[#666]"
+                className="text-[9.6px] font-semibold uppercase tracking-[0.08em] text-[#666]"
                 style={{ fontFamily: '"Cinzel", serif' }}
               >
                 Orçamento
               </div>
-              <div className="text-[1.2rem] font-bold text-[#a3802e]">{budget} PB</div>
+              <div className="text-[19.2px] font-bold text-[#a3802e]">{budget} PB</div>
             </div>
             <div className="border-r border-[#d1c8b4] px-[8px] py-[6px] text-center">
               <div
-                className="text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-[#666]"
+                className="text-[9.6px] font-semibold uppercase tracking-[0.08em] text-[#666]"
                 style={{ fontFamily: '"Cinzel", serif' }}
               >
                 Total
               </div>
-              <div className="text-[1.2rem] font-bold">{total} PB</div>
+              <div className="text-[19.2px] font-bold">{total} PB</div>
             </div>
             <div className="px-[8px] py-[6px] text-center">
               <div
-                className="text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-[#666]"
+                className="text-[9.6px] font-semibold uppercase tracking-[0.08em] text-[#666]"
                 style={{ fontFamily: '"Cinzel", serif' }}
               >
                 Balanço
               </div>
               <div
-                className="text-[0.85rem] font-bold leading-tight"
+                className="text-[13.6px] font-bold leading-tight"
                 style={{ color: VERDICT_COLOR[verdict] }}
               >
                 {VERDICT_LABEL[verdict]}
@@ -106,7 +106,7 @@ export const EncounterSummaryBlock = forwardRef<HTMLDivElement, EncounterSummary
           </div>
 
           {activeAjustes.length > 0 ? (
-            <div className="flex flex-wrap gap-[6px] px-[10px] py-[6px] text-[0.85rem] leading-[1.5]">
+            <div className="flex flex-wrap gap-[6px] px-[10px] py-[6px] text-[13.6px] leading-[1.5]">
               <strong className="font-extrabold">Ajustes:</strong>{' '}
               <span>{activeAjustes.join(' · ')}</span>
             </div>
@@ -120,13 +120,13 @@ export const EncounterSummaryBlock = forwardRef<HTMLDivElement, EncounterSummary
               <span
                 style={{ flex: 1, height: '1px', background: 'linear-gradient(to right, transparent, #a3802e)' }}
               />
-              <span className="text-[0.6rem]">◆</span>
+              <span className="text-[9.6px]">◆</span>
               <span
                 style={{ flex: 1, height: '1px', background: 'linear-gradient(to left, transparent, #a3802e)' }}
               />
             </div>
             <h2
-              className="mb-[8px] text-center text-[0.75rem] font-bold uppercase tracking-[0.15em] text-[#1a1a1a]"
+              className="mb-[8px] text-center text-[12px] font-bold uppercase tracking-[0.15em] text-[#1a1a1a]"
               style={{ fontFamily: '"Cinzel", serif', fontVariant: 'small-caps' }}
             >
               Adversárias
@@ -142,16 +142,16 @@ export const EncounterSummaryBlock = forwardRef<HTMLDivElement, EncounterSummary
                         : undefined
                     }
                   >
-                    <td className="py-[4px] pr-[8px] text-[0.9rem] font-bold leading-[1.4]">
+                    <td className="py-[4px] pr-[8px] text-[14.4px] font-bold leading-[1.4]">
                       {e.adversary.nome}
                     </td>
-                    <td className="py-[4px] pr-[8px] text-[0.85rem] italic text-[#5c4a1e]">
+                    <td className="py-[4px] pr-[8px] text-[13.6px] italic text-[#5c4a1e]">
                       {TIPO_LABEL[e.adversary.tipo]} · {PATAMAR_LABEL[e.adversary.patamar]}°
                     </td>
-                    <td className="py-[4px] pr-[8px] text-center text-[0.85rem]">
+                    <td className="py-[4px] pr-[8px] text-center text-[13.6px]">
                       ×{e.quantidade}
                     </td>
-                    <td className="py-[4px] text-right text-[0.85rem] text-[#a3802e] font-bold">
+                    <td className="py-[4px] text-right text-[13.6px] text-[#a3802e] font-bold">
                       {e.custo} PB
                     </td>
                   </tr>
@@ -168,18 +168,18 @@ export const EncounterSummaryBlock = forwardRef<HTMLDivElement, EncounterSummary
               <span
                 style={{ flex: 1, height: '1px', background: 'linear-gradient(to right, transparent, #a3802e)' }}
               />
-              <span className="text-[0.6rem]">◆</span>
+              <span className="text-[9.6px]">◆</span>
               <span
                 style={{ flex: 1, height: '1px', background: 'linear-gradient(to left, transparent, #a3802e)' }}
               />
             </div>
             <h2
-              className="mb-[6px] text-center text-[0.75rem] font-bold uppercase tracking-[0.15em] text-[#1a1a1a]"
+              className="mb-[6px] text-center text-[12px] font-bold uppercase tracking-[0.15em] text-[#1a1a1a]"
               style={{ fontFamily: '"Cinzel", serif', fontVariant: 'small-caps' }}
             >
               Notas do Mestre
             </h2>
-            <p className="text-[0.9rem] leading-[1.5]">{notas}</p>
+            <p className="text-[14.4px] leading-[1.5]">{notas}</p>
           </>
         ) : null}
       </div>

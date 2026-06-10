@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import { nanoid } from 'nanoid';
 import clsx from 'clsx';
 import { AppHeader } from '@/components/nav/AppHeader';
 import { BestiarioCard } from '@/components/bestiario/BestiarioCard';
+import { ExportFavoritesButton } from '@/components/library/ExportFavoritesButton';
 import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { BESTIARIO } from '@/data/bestiario';
 import { TIPOS } from '@/data/tipos';
@@ -18,12 +19,48 @@ import type { Adversary, Patamar, Tipo } from '@/types/adversary';
 
 const PAGE_SIZE = 10;
 
+/** Chip de filtro multi-seleção (tags clicáveis no lugar de dropdowns). */
+function FilterChip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      aria-pressed={active}
+      className={clsx(
+        'rounded border px-2.5 py-0.5 text-sm font-semibold transition-colors',
+        active
+          ? 'border-gold bg-gold/20 text-amber-800'
+          : 'border-ink/30 bg-parchment text-ink/60 hover:border-gold/50 hover:text-ink/80',
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+function toggleInSet<T>(set: Set<T>, value: T): Set<T> {
+  const next = new Set(set);
+  if (next.has(value)) {
+    next.delete(value);
+  } else {
+    next.add(value);
+  }
+  return next;
+}
+
 export function BestiarioPage() {
   const { importOne } = useAdversaryLibrary();
   const { favorites, toggle } = useBestiarioFavorites();
   const [query, setQuery] = useState('');
-  const [tipo, setTipo] = useState<Tipo | ''>('');
-  const [patamar, setPatamar] = useState<Patamar | ''>('');
+  const [tipos, setTipos] = useState<Set<Tipo>>(new Set());
+  const [patamares, setPatamares] = useState<Set<Patamar>>(new Set());
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -32,19 +69,24 @@ export function BestiarioPage() {
     const q = normalizeSearch(query.trim());
     return BESTIARIO.filter((adv) => {
       if (showFavoritesOnly && !favorites.has(adv.id)) return false;
-      if (tipo && adv.tipo !== tipo) return false;
-      if (patamar && adv.patamar !== patamar) return false;
+      if (tipos.size > 0 && !tipos.has(adv.tipo)) return false;
+      if (patamares.size > 0 && !patamares.has(adv.patamar)) return false;
       if (!q) return true;
       const hay = normalizeSearch(`${adv.nome} ${adv.descricao ?? ''}`);
       return hay.includes(q);
     });
-  }, [query, tipo, patamar, showFavoritesOnly, favorites]);
+  }, [query, tipos, patamares, showFavoritesOnly, favorites]);
+
+  const favoriteItems = useMemo(
+    () => BESTIARIO.filter((adv) => favorites.has(adv.id)),
+    [favorites],
+  );
 
   const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
 
   useEffect(() => {
     setPage(1);
-  }, [query, tipo, patamar, showFavoritesOnly, favorites]);
+  }, [query, tipos, patamares, showFavoritesOnly, favorites]);
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
@@ -90,34 +132,53 @@ export function BestiarioPage() {
     <div className="mx-auto max-w-6xl p-4 sm:p-6">
       <AppHeader subtitle="Bestiário oficial — Livro Básico pp.209–239" />
 
-      <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_200px_200px]">
+      <div className="mb-3">
         <Input
           type="search"
           placeholder="Buscar por nome…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <Select value={tipo} onChange={(e) => setTipo(e.target.value as Tipo | '')}>
-          <option value="">Todos os tipos</option>
-          {TIPOS.map((t) => (
-            <option key={t.value} value={t.value}>{t.label}</option>
-          ))}
-        </Select>
-        <Select
-          value={patamar === '' ? '' : String(patamar)}
-          onChange={(e) => {
-            const found = PATAMARES.find((p) => String(p.value) === e.target.value);
-            setPatamar(found ? found.value : '');
-          }}
-        >
-          <option value="">Todos os patamares</option>
-          {PATAMARES.map((p) => (
-            <option key={p.value} value={p.value}>{p.label}</option>
-          ))}
-        </Select>
       </div>
 
-      <div className="mb-4 flex items-center gap-3">
+      <div className="mb-2 flex flex-wrap items-center gap-1.5">
+        <span className="field-label mr-1">Tipo:</span>
+        {TIPOS.map((t) => (
+          <FilterChip
+            key={t.value}
+            active={tipos.has(t.value)}
+            onClick={() => setTipos((prev) => toggleInSet(prev, t.value))}
+          >
+            {t.label}
+          </FilterChip>
+        ))}
+      </div>
+
+      <div className="mb-3 flex flex-wrap items-center gap-1.5">
+        <span className="field-label mr-1">Patamar:</span>
+        {PATAMARES.map((p) => (
+          <FilterChip
+            key={p.value}
+            active={patamares.has(p.value)}
+            onClick={() => setPatamares((prev) => toggleInSet(prev, p.value))}
+          >
+            {p.label}
+          </FilterChip>
+        ))}
+        {tipos.size > 0 || patamares.size > 0 ? (
+          <button
+            onClick={() => {
+              setTipos(new Set());
+              setPatamares(new Set());
+            }}
+            className="ml-1 text-sm text-ink/60 underline hover:text-ink/80"
+          >
+            Limpar filtros
+          </button>
+        ) : null}
+      </div>
+
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <button
           onClick={() => setShowFavoritesOnly((v) => !v)}
           aria-pressed={showFavoritesOnly}
@@ -136,6 +197,7 @@ export function BestiarioPage() {
             </span>
           )}
         </button>
+        <ExportFavoritesButton adversaries={favoriteItems} filename="favoritos-bestiario" />
       </div>
 
       {toast ? (

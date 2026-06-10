@@ -31,18 +31,18 @@ export const TransformacaoBlock = forwardRef<HTMLDivElement, TransformacaoBlockP
       >
         {/* Cabeçalho */}
         <header className="mb-[12px]">
-          <div className="mb-[4px] text-[0.6rem] font-semibold uppercase tracking-[0.15em] text-[#a3802e]"
+          <div className="mb-[4px] text-[9.6px] font-semibold uppercase tracking-[0.15em] text-[#a3802e]"
             style={{ fontFamily: '"Cinzel", serif' }}>
             Transformação
           </div>
           <h1
-            className="m-0 text-[1.4rem] font-black uppercase leading-[1.15] tracking-[-0.5px] text-[#1a1a1a]"
+            className="m-0 text-[22.4px] font-black uppercase leading-[1.15] tracking-[-0.5px] text-[#1a1a1a]"
             style={{ fontFamily: '"Cinzel", serif' }}
           >
             {nome || 'Nome da transformação'}
           </h1>
           {descricao ? (
-            <p className="mt-[5px] text-[0.9rem] italic leading-[1.5]">{descricao}</p>
+            <p className="mt-[5px] text-[14.4px] italic leading-[1.5]">{descricao}</p>
           ) : null}
         </header>
 
@@ -51,14 +51,14 @@ export const TransformacaoBlock = forwardRef<HTMLDivElement, TransformacaoBlockP
           <section className="mb-[14px] overflow-hidden rounded border border-[#d1c8b4] bg-white/80">
             <div className="px-[10px] py-[8px] text-center">
               <div
-                className="mb-[2px] text-[0.6rem] font-semibold uppercase tracking-[0.08em] text-[#666]"
+                className="mb-[2px] text-[9.6px] font-semibold uppercase tracking-[0.08em] text-[#666]"
                 style={{ fontFamily: '"Cinzel", serif' }}
               >
                 {tokens.nome}
               </div>
-              <div className="text-[1.2rem] font-bold text-[#a3802e]">{tokens.maximo}</div>
+              <div className="text-[19.2px] font-bold text-[#a3802e]">{tokens.maximo}</div>
               {tokens.descricao ? (
-                <p className="mt-[4px] text-[0.8rem] leading-[1.4] text-[#1a1a1a]">
+                <p className="mt-[4px] text-[12.8px] leading-[1.4] text-[#1a1a1a]">
                   {renderKeywords(tokens.descricao)}
                 </p>
               ) : null}
@@ -71,12 +71,12 @@ export const TransformacaoBlock = forwardRef<HTMLDivElement, TransformacaoBlockP
           <section className="mb-[14px]">
             <Divider />
             <h2
-              className="mb-[8px] text-center text-[0.75rem] font-bold uppercase tracking-[0.15em] text-[#1a1a1a]"
+              className="mb-[8px] text-center text-[12px] font-bold uppercase tracking-[0.15em] text-[#1a1a1a]"
               style={{ fontFamily: '"Cinzel", serif', fontVariant: 'small-caps' }}
             >
               {formaAlternativa.nome || 'Forma Alternativa'}
             </h2>
-            <p className="text-[0.9rem] leading-[1.5]">
+            <p className="text-[14.4px] leading-[1.5]">
               {renderKeywords(formaAlternativa.descricao)}
             </p>
           </section>
@@ -87,15 +87,15 @@ export const TransformacaoBlock = forwardRef<HTMLDivElement, TransformacaoBlockP
           <section>
             <Divider />
             <h2
-              className="mb-[8px] text-center text-[0.75rem] font-bold uppercase tracking-[0.15em] text-[#1a1a1a]"
+              className="mb-[8px] text-center text-[12px] font-bold uppercase tracking-[0.15em] text-[#1a1a1a]"
               style={{ fontFamily: '"Cinzel", serif', fontVariant: 'small-caps' }}
             >
               Habilidades
             </h2>
             <div>
               {habilidades.map((h) => (
-                <p key={h.id} className="my-[8px] text-[0.9rem] leading-[1.5]">
-                  <span className="text-[0.7rem] text-[#a3802e]">◆ </span>
+                <p key={h.id} className="my-[8px] text-[14.4px] leading-[1.5]">
+                  <span className="text-[11.2px] text-[#a3802e]">◆ </span>
                   <strong className="font-extrabold">{h.nome}</strong>
                   <em className="text-[#a3802e]"> ({ABILITY_LABEL[h.tipo]})</em>:{' '}
                   {renderKeywords(h.descricao)}
@@ -115,7 +115,7 @@ function Divider() {
       <span
         style={{ flex: 1, height: '1px', background: 'linear-gradient(to right, transparent, #a3802e)' }}
       />
-      <span className="text-[0.6rem]">◆</span>
+      <span className="text-[9.6px]">◆</span>
       <span
         style={{ flex: 1, height: '1px', background: 'linear-gradient(to left, transparent, #a3802e)' }}
       />

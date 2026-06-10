@@ -145,13 +145,30 @@ export function TransformacaoBuilderPage() {
               ← Transformações
             </Link>
             <Button type="submit" form="transformacao-form" variant="primary">Salvar</Button>
-            <Button type="button" variant="secondary" onClick={doExportPng} disabled={!!exporting}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={doExportPng}
+              disabled={!!exporting}
+              title="Baixa o bloco como imagem PNG — ideal para compartilhar no Discord ou usar em VTTs"
+            >
               {exporting === 'png' ? 'Exportando…' : 'PNG'}
             </Button>
-            <Button type="button" variant="secondary" onClick={doExportPdf} disabled={!!exporting}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={doExportPdf}
+              disabled={!!exporting}
+              title="Baixa o bloco como PDF pronto para impressão"
+            >
               {exporting === 'pdf' ? 'Exportando…' : 'PDF'}
             </Button>
-            <Button type="button" variant="secondary" onClick={() => exportTransformacaoJson(preview)}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => exportTransformacaoJson(preview)}
+              title="Baixa os dados em JSON — serve de backup e pode ser importado em outro navegador"
+            >
               JSON
             </Button>
           </>
