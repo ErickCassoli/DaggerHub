@@ -8,6 +8,7 @@ import { blankAdversary } from '@/lib/defaults';
 import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
 import { AdversaryForm } from '@/components/form/AdversaryForm';
 import { StatsBlock } from '@/components/StatsBlock/StatsBlock';
+import { FitBlock } from '@/components/StatsBlock/FitBlock';
 import { Button } from '@/components/ui/Button';
 import { AppHeader } from '@/components/nav/AppHeader';
 import { exportJson, exportPdf, exportPng } from '@/lib/export';
@@ -149,9 +150,9 @@ export function BuilderPage() {
 
         <aside className="lg:sticky lg:top-6 lg:self-start">
           <h2 className="field-label mb-2">Preview</h2>
-          <div className="flex justify-center overflow-x-auto">
+          <FitBlock>
             <StatsBlock adversary={preview} ref={previewRef} />
-          </div>
+          </FitBlock>
           <p className="mt-3 text-xs text-ink/60">
             Este é exatamente o bloco que será exportado. Dica: use as keywords clicáveis nas
             descrições de habilidades para destacar termos do sistema.
