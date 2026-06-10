@@ -1,7 +1,7 @@
 import type { Transformacao } from '@/types/transformacao';
 import { transformacaoSchema } from '@/lib/transformacaoSchema';
 import { slugify } from '@/lib/slug';
-import { triggerDownload, nodeToPng } from '@/lib/exportUtils';
+import { downloadBlob, triggerDownload, nodeToPng } from '@/lib/exportUtils';
 
 export async function exportTransformacaoPng(node: HTMLElement, nome: string): Promise<void> {
   const { dataUrl } = await nodeToPng(node);
@@ -22,9 +22,7 @@ export async function exportTransformacaoPdf(node: HTMLElement, nome: string): P
 
 export function exportTransformacaoJson(t: Transformacao): void {
   const blob = new Blob([JSON.stringify(t, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  triggerDownload(url, `${slugify(t.nome || 'transformacao')}.json`);
-  URL.revokeObjectURL(url);
+  downloadBlob(blob, `${slugify(t.nome, 'transformacao')}.json`);
 }
 
 export type TransformacaoJsonImportResult =

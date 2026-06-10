@@ -200,7 +200,7 @@ export function LibraryPage() {
         >
           <span>{showFavoritesOnly ? '★' : '☆'}</span>
           <span>Favoritos</span>
-          {favorites.size > 0 && (
+          {favoriteItems.length > 0 && (
             <span className="rounded-full bg-ink/10 px-1.5 py-0.5 text-xs leading-none">
               {favoriteItems.length}
             </span>

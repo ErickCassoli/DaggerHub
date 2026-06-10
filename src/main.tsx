@@ -16,6 +16,13 @@ window.addEventListener('vite:preloadError', () => {
   }
 });
 
+// Após 30s estáveis, libera o guard para que um próximo deploy mid-sessão
+// também consiga recarregar automaticamente. O atraso evita loop de reload
+// quando o recarregamento não resolve a falha de chunk.
+window.setTimeout(() => {
+  sessionStorage.removeItem('daggerhub:chunk-reload');
+}, 30_000);
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <HashRouter>

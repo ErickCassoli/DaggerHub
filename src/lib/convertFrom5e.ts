@@ -7,7 +7,10 @@ const CR_FRACTIONS: Record<string, number> = { '1/8': 0.125, '1/4': 0.25, '1/2':
 function parseCR(text: string): number | null {
   const m = text.match(/\bChallenge\s+(\d+\/\d+|\d+)/i);
   if (!m) return null;
-  return CR_FRACTIONS[m[1]] ?? Number(m[1]);
+  // Frações fora da tabela (ex.: "3/4" em homebrew) viram NaN — trate como
+  // não encontrado para o aviso correto disparar, em vez de cair no Patamar 4.
+  const cr = CR_FRACTIONS[m[1]] ?? Number(m[1]);
+  return Number.isFinite(cr) ? cr : null;
 }
 
 function crToPatamar(cr: number): Patamar {
@@ -190,7 +193,8 @@ export function convertFrom5e(rawText: string): ConvertFrom5eResult {
       tipo,
       patamar,
       descricao,
-      motivacoes: [],
+      // O schema exige ao menos 1 motivação; placeholder até o usuário revisar.
+      motivacoes: ['a definir'],
       dificuldade,
       limiarMaior: baseline.limiarMaior,
       limiarGrave: baseline.limiarGrave,
@@ -217,7 +221,7 @@ function buildFallback(): Adversary {
     tipo: 'comum',
     patamar: 1,
     descricao: '',
-    motivacoes: [],
+    motivacoes: ['a definir'],
     dificuldade: baseline.dificuldade,
     limiarMaior: baseline.limiarMaior,
     limiarGrave: baseline.limiarGrave,

@@ -76,7 +76,7 @@ export const AmbienteBlock = forwardRef<HTMLDivElement, AmbienteBlockProps>(func
 
         {adversarios.length > 0 ? (
           <div className="px-[10px] py-[6px] text-[14.4px] leading-[1.5]">
-            <strong className="font-extrabold">Adversários:</strong>{' '}
+            <strong className="font-extrabold">Adversárias:</strong>{' '}
             {adversarios.join(', ')}
           </div>
         ) : null}

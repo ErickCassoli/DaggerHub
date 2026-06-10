@@ -1,4 +1,4 @@
-import { useRef, type MutableRefObject } from 'react';
+import { type MutableRefObject } from 'react';
 import { KEYWORDS } from '@/data/keywords';
 
 interface KeywordChipsProps {
@@ -12,10 +12,7 @@ interface KeywordChipsProps {
  * Se não houver foco, anexa ao final separado por espaço.
  */
 export function KeywordChips({ textareaRef, value, onInsert }: KeywordChipsProps) {
-  const last = useRef<string>('');
-
   const insert = (keyword: string) => {
-    last.current = keyword;
     const token = `**${keyword}**`;
     const ta = textareaRef.current;
     if (!ta) {

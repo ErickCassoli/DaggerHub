@@ -64,7 +64,7 @@ export const EncounterSummaryBlock = forwardRef<HTMLDivElement, EncounterSummary
           ) : null}
           <p className="mt-[5px] mb-[10px] text-[14.4px] leading-[1.5]">
             <strong className="font-extrabold">Grupo:</strong>{' '}
-            {party.numPC} PCs · Nível {party.nivelPC}°
+            {party.numPC} PCs · Nível {party.nivelPC}
           </p>
         </header>
 
@@ -146,7 +146,7 @@ export const EncounterSummaryBlock = forwardRef<HTMLDivElement, EncounterSummary
                       {e.adversary.nome}
                     </td>
                     <td className="py-[4px] pr-[8px] text-[13.6px] italic text-[#5c4a1e]">
-                      {TIPO_LABEL[e.adversary.tipo]} · {PATAMAR_LABEL[e.adversary.patamar]}°
+                      {TIPO_LABEL[e.adversary.tipo]} · {PATAMAR_LABEL[e.adversary.patamar]}
                     </td>
                     <td className="py-[4px] pr-[8px] text-center text-[13.6px]">
                       ×{e.quantidade}

@@ -1,7 +1,7 @@
 import type { Ambiente } from '@/types/ambiente';
 import { ambienteSchema } from '@/lib/ambienteSchema';
 import { slugify } from '@/lib/slug';
-import { triggerDownload, nodeToPng } from '@/lib/exportUtils';
+import { downloadBlob, triggerDownload, nodeToPng } from '@/lib/exportUtils';
 
 export async function exportAmbientePng(node: HTMLElement, nome: string): Promise<void> {
   const { dataUrl } = await nodeToPng(node);
@@ -18,9 +18,7 @@ export async function exportAmbientePdf(node: HTMLElement, nome: string): Promis
 
 export function exportAmbienteJson(ambiente: Ambiente): void {
   const blob = new Blob([JSON.stringify(ambiente, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  triggerDownload(url, `${slugify(ambiente.nome || 'ambiente')}.json`);
-  URL.revokeObjectURL(url);
+  downloadBlob(blob, `${slugify(ambiente.nome, 'ambiente')}.json`);
 }
 
 export type AmbienteJsonImportResult =

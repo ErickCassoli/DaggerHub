@@ -137,7 +137,7 @@ export function QuickRefModal({ open, onClose }: QuickRefModalProps) {
                       : 'text-ink/70 hover:bg-ink/10',
                   )}
                 >
-                  {p.value}°
+                  {p.value}º
                 </button>
               ))}
             </div>

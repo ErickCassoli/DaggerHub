@@ -9,6 +9,7 @@ import { useAmbienteLibrary } from '@/hooks/useAmbienteLibrary';
 import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
 import { AmbienteForm } from '@/components/ambiente/AmbienteForm';
 import { AmbienteBlock } from '@/components/AmbienteBlock/AmbienteBlock';
+import { FitBlock } from '@/components/StatsBlock/FitBlock';
 import { Button } from '@/components/ui/Button';
 import { AppHeader } from '@/components/nav/AppHeader';
 import {
@@ -63,6 +64,8 @@ export function AmbienteBuilderPage() {
     setSaveError(null);
     const saved = upsert(data);
     setLastSavedId(saved.id);
+    // Marca o form como "limpo" para o banner de confirmação reaparecer.
+    form.reset(saved);
     if (!id) {
       navigate(`/ambientes/edit/${saved.id}`, { replace: true });
     }
@@ -160,9 +163,9 @@ export function AmbienteBuilderPage() {
 
         <aside className="lg:sticky lg:top-6 lg:self-start">
           <h2 className="field-label mb-2">Preview</h2>
-          <div className="flex justify-center overflow-x-auto">
+          <FitBlock>
             <AmbienteBlock ambiente={preview} adversarios={adversarios} ref={previewRef} />
-          </div>
+          </FitBlock>
           <p className="mt-3 text-xs text-ink/60">
             Este é exatamente o bloco que será exportado. Use as keywords clicáveis nas
             descrições para destacar termos do sistema.

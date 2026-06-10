@@ -20,7 +20,6 @@ export function TransformacaoImportButton({ onImport }: TransformacaoImportButto
       return;
     }
     onImport(res.data);
-    if (inputRef.current) inputRef.current.value = '';
   };
 
   return (
@@ -31,7 +30,10 @@ export function TransformacaoImportButton({ onImport }: TransformacaoImportButto
         accept="application/json"
         className="hidden"
         onChange={(e) => {
-          void onFile(e.target.files?.[0]);
+          const file = e.target.files?.[0];
+          // Limpa sempre: permite re-selecionar o mesmo arquivo após erro.
+          e.target.value = '';
+          void onFile(file);
         }}
       />
       <Button type="button" variant="secondary" onClick={() => inputRef.current?.click()}>

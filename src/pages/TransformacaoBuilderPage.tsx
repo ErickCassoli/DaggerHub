@@ -8,6 +8,7 @@ import { transformacaoSchema } from '@/lib/transformacaoSchema';
 import { blankTransformacao, blankTransformacaoAbility } from '@/lib/transformacaoDefaults';
 import { useTransformacaoLibrary } from '@/hooks/useTransformacaoLibrary';
 import { TransformacaoBlock } from '@/components/TransformacaoBlock';
+import { FitBlock } from '@/components/StatsBlock/FitBlock';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
@@ -93,6 +94,8 @@ export function TransformacaoBuilderPage() {
     setSaveError(null);
     const saved = upsert(data);
     setLastSavedId(saved.id);
+    // Marca o form como "limpo" para o banner de confirmação reaparecer.
+    form.reset(saved);
     if (!id) {
       navigate(`/transformacoes/edit/${saved.id}`, { replace: true });
     }
@@ -175,7 +178,7 @@ export function TransformacaoBuilderPage() {
         }
       />
 
-      {lastSavedId ? (
+      {lastSavedId && !form.formState.isDirty ? (
         <p className="mb-3 rounded border border-green-800/30 bg-green-50 px-3 py-2 text-sm text-green-900 dark:border-green-700/30 dark:bg-green-950 dark:text-green-200">
           Salvo no navegador (localStorage).
         </p>
@@ -348,9 +351,9 @@ export function TransformacaoBuilderPage() {
 
         {/* Preview */}
         <aside className="xl:sticky xl:top-6 xl:self-start">
-          <div className="overflow-x-auto">
+          <FitBlock>
             <TransformacaoBlock ref={previewRef} transformacao={preview} />
-          </div>
+          </FitBlock>
         </aside>
       </div>
 

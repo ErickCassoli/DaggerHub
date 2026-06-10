@@ -90,6 +90,10 @@ docs/
 - `/bestiario` — `BestiarioPage` (read-only official monsters; copy → user library)
 - `/encounters`, `/encounters/new`, `/encounters/edit/:id` — encounter builder
 - `/ambientes`, `/ambientes/new`, `/ambientes/edit/:id` — ambiente (environment) builder
+- `/transformacoes`, `/transformacoes/new`, `/transformacoes/edit/:id` —
+  transformação builder (`src/types/transformacao.ts`, `transformacaoSchema`,
+  `useTransformacaoLibrary`, key `daggerhub:transformacoes:v1`) — mirrors the
+  other builders (RHF + zod, off-screen `TransformacaoBlock` export)
 
 Anything else redirects to `/`. Use `<Link to="/...">` and `useNavigate()` from
 `react-router-dom`; never hard-code base paths.

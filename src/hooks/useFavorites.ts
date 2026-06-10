@@ -1,6 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 function loadFavorites(storageKey: string): Set<string> {
+  if (typeof localStorage === 'undefined') return new Set();
   try {
     const raw = localStorage.getItem(storageKey);
     if (!raw) return new Set();
@@ -13,7 +14,12 @@ function loadFavorites(storageKey: string): Set<string> {
 }
 
 function saveFavorites(storageKey: string, favorites: Set<string>): void {
-  localStorage.setItem(storageKey, JSON.stringify([...favorites]));
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem(storageKey, JSON.stringify([...favorites]));
+  } catch {
+    // quota cheia / modo privado — favoritos seguem só em memória
+  }
 }
 
 /** Conjunto de IDs favoritados persistido em localStorage sob `storageKey`. */
@@ -29,12 +35,16 @@ export function useFavorites(storageKey: string) {
         } else {
           next.add(id);
         }
-        saveFavorites(storageKey, next);
         return next;
       });
     },
-    [storageKey],
+    [],
   );
+
+  // Persistir fora do updater: ele pode rodar duas vezes em StrictMode.
+  useEffect(() => {
+    saveFavorites(storageKey, favorites);
+  }, [storageKey, favorites]);
 
   return { favorites, toggle };
 }

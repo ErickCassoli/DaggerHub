@@ -15,12 +15,19 @@ const TARGET_FIELDS = ['dificuldade', 'limiarMaior', 'limiarGrave', 'pv', 'pf', 
 export function useAutoSuggest(form: Form) {
   const tipo = form.watch('tipo');
   const patamar = form.watch('patamar');
-  const lastKey = useRef<string>('');
+  const lastKey = useRef<string | null>(null);
 
   useEffect(() => {
     if (!tipo || !patamar) return;
     const key = `${tipo}:${patamar}`;
     if (lastKey.current === key) return;
+    // Primeira execução (montagem): os defaultValues já refletem o registro
+    // carregado ou o blankAdversary() com baseline — não sobrescrever, senão
+    // editar uma adversária salva resetaria os stats para o baseline.
+    if (lastKey.current === null) {
+      lastKey.current = key;
+      return;
+    }
     lastKey.current = key;
 
     const base = getBaseline(patamar as Patamar, tipo as Tipo);

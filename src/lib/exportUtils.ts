@@ -9,6 +9,13 @@ export function triggerDownload(url: string, filename: string): void {
   document.body.removeChild(a);
 }
 
+/** Baixa um blob revogando a object URL com atraso (revogar síncrono pode abortar o download em Firefox/Safari). */
+export function downloadBlob(blob: Blob, filename: string): void {
+  const url = URL.createObjectURL(blob);
+  triggerDownload(url, filename);
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+}
+
 export async function nodeToPng(
   node: HTMLElement,
 ): Promise<{ dataUrl: string; width: number; height: number }> {

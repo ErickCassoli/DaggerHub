@@ -1,4 +1,4 @@
-export function slugify(input: string): string {
+export function slugify(input: string, fallback = 'adversaria'): string {
   return (
     input
       .normalize('NFD')
@@ -6,7 +6,7 @@ export function slugify(input: string): string {
       .toLowerCase()
       .trim()
       .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-      .slice(0, 60) || 'adversaria'
+      .slice(0, 60)
+      .replace(/^-+|-+$/g, '') || fallback
   );
 }
