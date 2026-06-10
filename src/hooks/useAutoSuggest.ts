@@ -47,29 +47,19 @@ export function applyBaselineOverride(form: Form) {
   const values = form.getValues();
   const base = getBaseline(values.patamar, values.tipo);
 
-  const updated = { ...values };
-  for (const field of TARGET_FIELDS) {
-    (updated as Record<string, unknown>)[field] = base[field];
-  }
-  if (updated.ataques[0]) {
-    updated.ataques = [
-      { ...updated.ataques[0], dano: base.danoSugerido },
-      ...updated.ataques.slice(1),
-    ];
-  }
-
-  form.reset(updated, { keepDefaultValues: true });
-
+  // Apenas setValue campo a campo (sem form.reset): marcar como dirty já
+  // impede o useAutoSuggest de sobrescrever depois, e validar limpa erros
+  // antigos (ex.: dificuldade acima do máximo digitada antes do override).
   for (const field of TARGET_FIELDS) {
     form.setValue(field, base[field] as never, {
       shouldDirty: true,
-      shouldValidate: false,
+      shouldValidate: true,
     });
   }
-  if (updated.ataques[0]) {
+  if (values.ataques[0]) {
     form.setValue('ataques.0.dano', base.danoSugerido, {
       shouldDirty: true,
-      shouldValidate: false,
+      shouldValidate: true,
     });
   }
 }
