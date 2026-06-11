@@ -4,9 +4,15 @@ import { exportBundle, parseBundleImport } from '@/lib/bundleExport';
 import type { Adversary } from '@/types/adversary';
 import type { Encounter } from '@/types/encounter';
 import type { Ambiente } from '@/types/ambiente';
+import type { Transformacao } from '@/types/transformacao';
 
 interface BundleButtonsProps {
-  onImport: (adversarias: Adversary[], encontros: Encounter[], ambientes: Ambiente[]) => void;
+  onImport: (
+    adversarias: Adversary[],
+    encontros: Encounter[],
+    ambientes: Ambiente[],
+    transformacoes: Transformacao[],
+  ) => void;
 }
 
 export function BundleButtons({ onImport }: BundleButtonsProps) {
@@ -23,11 +29,12 @@ export function BundleButtons({ onImport }: BundleButtonsProps) {
       return;
     }
 
-    const { adversarias, encontros, ambientes, descartados } = res;
+    const { adversarias, encontros, ambientes, transformacoes, descartados } = res;
     const parts = [
       adversarias.length > 0 ? `${adversarias.length} adversária${adversarias.length !== 1 ? 's' : ''}` : '',
       encontros.length > 0 ? `${encontros.length} encontro${encontros.length !== 1 ? 's' : ''}` : '',
       ambientes.length > 0 ? `${ambientes.length} ambiente${ambientes.length !== 1 ? 's' : ''}` : '',
+      transformacoes.length > 0 ? `${transformacoes.length} transformação${transformacoes.length !== 1 ? 'ões' : ''}` : '',
     ].filter(Boolean);
 
     if (parts.length === 0) {
@@ -41,7 +48,7 @@ export function BundleButtons({ onImport }: BundleButtonsProps) {
     const msg = `Importar ${parts.join(', ')}? IDs duplicados serão renomeados automaticamente.${aviso}`;
     if (!confirm(msg)) return;
 
-    onImport(adversarias, encontros, ambientes);
+    onImport(adversarias, encontros, ambientes, transformacoes);
   };
 
   return (
