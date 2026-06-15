@@ -2,6 +2,34 @@ import type { Encounter } from '@/types/encounter';
 import { slugify } from '@/lib/slug';
 import { downloadBlob, nodeToPng } from '@/lib/exportUtils';
 
+export type EncounterJsonImportResult =
+  | { ok: true; data: Encounter }
+  | { ok: false; error: string };
+
+function isEncounterShape(v: unknown): v is Encounter {
+  if (!v || typeof v !== 'object') return false;
+  const obj = v as Record<string, unknown>;
+  return (
+    typeof obj['id'] === 'string' &&
+    typeof obj['nome'] === 'string' &&
+    Array.isArray(obj['entries']) &&
+    obj['party'] !== null &&
+    typeof obj['party'] === 'object'
+  );
+}
+
+export async function parseEncounterJsonImport(file: File): Promise<EncounterJsonImportResult> {
+  try {
+    const raw: unknown = JSON.parse(await file.text());
+    if (!isEncounterShape(raw)) {
+      return { ok: false, error: 'Arquivo inválido: não parece ser um encontro exportado pelo DaggerHub.' };
+    }
+    return { ok: true, data: raw };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : 'Erro desconhecido ao ler o arquivo' };
+  }
+}
+
 export function exportEncounterJson(encounter: Encounter): void {
   const blob = new Blob([JSON.stringify(encounter, null, 2)], { type: 'application/json' });
   downloadBlob(blob, `${slugify(encounter.nome, 'encontro')}.json`);

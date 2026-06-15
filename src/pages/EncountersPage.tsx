@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import { AppHeader } from '@/components/nav/AppHeader';
 import { Button } from '@/components/ui/Button';
 import { GeneratorModal } from '@/components/encounter/GeneratorModal';
+import { EncounterImportButton } from '@/components/encounter/EncounterImportButton';
 import { useEncounterLibrary } from '@/hooks/useEncounterLibrary';
 import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
 import { resolveAdversary } from '@/lib/adversarySources';
@@ -15,7 +16,7 @@ import type { Patamar } from '@/types/adversary';
 
 export function EncountersPage() {
   const navigate = useNavigate();
-  const { items, remove, duplicate, upsert } = useEncounterLibrary();
+  const { items, remove, duplicate, upsert, importOne } = useEncounterLibrary();
   const { items: biblioteca } = useAdversaryLibrary();
   const [generatorOpen, setGeneratorOpen] = useState(false);
 
@@ -54,6 +55,7 @@ export function EncountersPage() {
         subtitle="Construtor de encontros — Livro Básico p.197"
         actions={
           <>
+            <EncounterImportButton onImport={(enc) => { importOne(enc); }} />
             <Button variant="secondary" onClick={() => setGeneratorOpen(true)}>
               ✦ Gerar encontro
             </Button>
