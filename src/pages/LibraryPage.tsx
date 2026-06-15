@@ -67,6 +67,7 @@ export function LibraryPage() {
   const [query, setQuery] = useState('');
   const [selectedTipos, setSelectedTipos] = useState<Set<Tipo>>(new Set());
   const [selectedPatamares, setSelectedPatamares] = useState<Set<Patamar>>(new Set());
+  const [sortKey, setSortKey] = useState<'recente' | 'nome'>('recente');
   const [toast, setToast] = useState<string | null>(null);
   const [convertOpen, setConvertOpen] = useState(false);
 
@@ -78,13 +79,21 @@ export function LibraryPage() {
   const filteredItems = useMemo(() => {
     const q = normalizeSearch(query.trim());
     const base = showFavoritesOnly ? favoriteItems : items;
-    return base.filter((adv) => {
+    const filtered = base.filter((adv) => {
       if (selectedTipos.size > 0 && !selectedTipos.has(adv.tipo)) return false;
       if (selectedPatamares.size > 0 && !selectedPatamares.has(adv.patamar)) return false;
       if (!q) return true;
       return normalizeSearch(`${adv.nome} ${adv.descricao ?? ''}`).includes(q);
     });
-  }, [items, favoriteItems, showFavoritesOnly, query, selectedTipos, selectedPatamares]);
+    if (sortKey === 'nome') {
+      return [...filtered].sort((a, b) =>
+        normalizeSearch(a.nome).localeCompare(normalizeSearch(b.nome)),
+      );
+    }
+    return [...filtered].sort(
+      (a, b) => new Date(b.atualizadoEm).getTime() - new Date(a.atualizadoEm).getTime(),
+    );
+  }, [items, favoriteItems, showFavoritesOnly, query, selectedTipos, selectedPatamares, sortKey]);
 
   const hasActiveFilters =
     query.trim() !== '' || selectedTipos.size > 0 || selectedPatamares.size > 0;
@@ -213,6 +222,23 @@ export function LibraryPage() {
           )}
         </button>
         <ExportFavoritesButton adversaries={favoriteItems} filename="favoritos-biblioteca" />
+        <div className="ml-auto flex items-center gap-1">
+          {(['recente', 'nome'] as const).map((k) => (
+            <button
+              key={k}
+              onClick={() => setSortKey(k)}
+              aria-pressed={sortKey === k}
+              className={clsx(
+                'rounded border px-2.5 py-0.5 text-sm font-semibold transition-colors',
+                sortKey === k
+                  ? 'border-gold bg-gold/20 text-amber-800'
+                  : 'border-ink/30 bg-parchment text-ink/60 hover:border-gold/50 hover:text-ink/80',
+              )}
+            >
+              {k === 'recente' ? 'Recente' : 'A–Z'}
+            </button>
+          ))}
+        </div>
       </div>
 
       {toast ? (

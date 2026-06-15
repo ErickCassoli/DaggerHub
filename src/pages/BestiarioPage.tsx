@@ -8,6 +8,7 @@ import { ExportFavoritesButton } from '@/components/library/ExportFavoritesButto
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { BESTIARIO } from '@/data/bestiario';
+import { BESTIARIO_EXPANSAO } from '@/data/bestiarioExpansao';
 import { TIPOS } from '@/data/tipos';
 import { PATAMARES } from '@/data/patamares';
 import { reTierAdversary } from '@/data/baselines';
@@ -18,6 +19,9 @@ import { normalizeSearch } from '@/lib/normalize';
 import type { Adversary, Patamar, Tipo } from '@/types/adversary';
 
 const PAGE_SIZE = 10;
+
+// Fonte canônica única — adicionar itens de H&F a BESTIARIO_EXPANSAO é suficiente.
+const ALL_BESTIARIO = [...BESTIARIO, ...BESTIARIO_EXPANSAO];
 
 /** Chip de filtro multi-seleção (tags clicáveis no lugar de dropdowns). */
 function FilterChip({
@@ -67,7 +71,7 @@ export function BestiarioPage() {
 
   const results = useMemo(() => {
     const q = normalizeSearch(query.trim());
-    return BESTIARIO.filter((adv) => {
+    return ALL_BESTIARIO.filter((adv) => {
       if (showFavoritesOnly && !favorites.has(adv.id)) return false;
       if (tipos.size > 0 && !tipos.has(adv.tipo)) return false;
       if (patamares.size > 0 && !patamares.has(adv.patamar)) return false;
@@ -78,7 +82,7 @@ export function BestiarioPage() {
   }, [query, tipos, patamares, showFavoritesOnly, favorites]);
 
   const favoriteItems = useMemo(
-    () => BESTIARIO.filter((adv) => favorites.has(adv.id)),
+    () => ALL_BESTIARIO.filter((adv) => favorites.has(adv.id)),
     [favorites],
   );
 
@@ -100,7 +104,7 @@ export function BestiarioPage() {
   }, [results, page]);
 
   const onCopy = (id: string) => {
-    const source = BESTIARIO.find((a) => a.id === id);
+    const source = ALL_BESTIARIO.find((a) => a.id === id);
     if (!source) return;
     const copy = cloneBestiarioToLibrary(source, nanoid(10));
     importOne(copy);
@@ -109,7 +113,7 @@ export function BestiarioPage() {
   };
 
   const onCopyAsTier = (id: string, newPatamar: Patamar) => {
-    const source = BESTIARIO.find((a) => a.id === id);
+    const source = ALL_BESTIARIO.find((a) => a.id === id);
     if (!source) return;
     const now = new Date().toISOString();
     const copy: Adversary = {
@@ -208,7 +212,7 @@ export function BestiarioPage() {
         </p>
       ) : null}
 
-      {BESTIARIO.length === 0 ? (
+      {ALL_BESTIARIO.length === 0 ? (
         <div className="rounded-md border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-8 text-center">
           <p className="text-ink/70">O bestiário ainda não foi populado.</p>
           <p className="mt-1 text-sm text-ink/60">
