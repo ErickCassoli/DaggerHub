@@ -2,11 +2,14 @@ import { nanoid } from 'nanoid';
 import type { Adversary } from '@/types/adversary';
 import type { Encounter } from '@/types/encounter';
 import type { Ambiente } from '@/types/ambiente';
+import type { Transformacao } from '@/types/transformacao';
 import { adversarySchema } from '@/lib/schema';
 import { ambienteSchema } from '@/lib/ambienteSchema';
+import { transformacaoSchema } from '@/lib/transformacaoSchema';
 import { loadStore } from '@/lib/storage';
 import { loadEncounters } from '@/lib/encounterStorage';
 import { loadAmbientes } from '@/lib/ambienteStorage';
+import { loadTransformacoes } from '@/lib/transformacaoStorage';
 import { slugify } from '@/lib/slug';
 import { downloadBlob } from '@/lib/exportUtils';
 
@@ -16,6 +19,7 @@ export interface DaggerHubBundle {
   adversarias: Adversary[];
   encontros: Encounter[];
   ambientes: Ambiente[];
+  transformacoes: Transformacao[];
 }
 
 export type BundleImportResult =
@@ -24,6 +28,7 @@ export type BundleImportResult =
       adversarias: Adversary[];
       encontros: Encounter[];
       ambientes: Ambiente[];
+      transformacoes: Transformacao[];
       /** Itens que falharam na validação e foram ignorados. */
       descartados: number;
     }
@@ -33,6 +38,7 @@ export function exportBundle(): void {
   const adversarias = loadStore().items;
   const encontros = loadEncounters().items;
   const ambientes = loadAmbientes().items;
+  const transformacoes = loadTransformacoes().items;
 
   const bundle: DaggerHubBundle = {
     version: 1,
@@ -40,6 +46,7 @@ export function exportBundle(): void {
     adversarias,
     encontros,
     ambientes,
+    transformacoes,
   };
 
   const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
@@ -79,9 +86,19 @@ export async function parseBundleImport(file: File): Promise<BundleImportResult>
   const rawAdversarias: unknown[] = Array.isArray(obj['adversarias']) ? obj['adversarias'] : [];
   const rawEncontros: unknown[] = Array.isArray(obj['encontros']) ? obj['encontros'] : [];
   const rawAmbientes: unknown[] = Array.isArray(obj['ambientes']) ? obj['ambientes'] : [];
+  // Bundles criados antes de transformações existirem não têm esse campo — default []
+  const rawTransformacoes: unknown[] = Array.isArray(obj['transformacoes']) ? obj['transformacoes'] : [];
 
-  if (rawAdversarias.length === 0 && rawEncontros.length === 0 && rawAmbientes.length === 0) {
-    return { ok: false, error: 'Bundle vazio — nenhuma adversária, encontro ou ambiente encontrado.' };
+  if (
+    rawAdversarias.length === 0 &&
+    rawEncontros.length === 0 &&
+    rawAmbientes.length === 0 &&
+    rawTransformacoes.length === 0
+  ) {
+    return {
+      ok: false,
+      error: 'Bundle vazio — nenhuma adversária, encontro, ambiente ou transformação encontrado.',
+    };
   }
 
   // 1. Validate adversaries; track ID remapping for collision handling
@@ -138,10 +155,24 @@ export async function parseBundleImport(file: File): Promise<BundleImportResult>
     ambientes.push({ ...amb, id: newId, adversariosSugeridos });
   }
 
+  // 4. Transformações — validate with schema
+  const existingTransformacaoIds = new Set(loadTransformacoes().items.map((i) => i.id));
+  const transformacoes: Transformacao[] = [];
+
+  for (const item of rawTransformacoes) {
+    const parsed = transformacaoSchema.safeParse(item);
+    if (!parsed.success) continue;
+    const t = parsed.data as Transformacao;
+    const newId = existingTransformacaoIds.has(t.id) ? nanoid(10) : t.id;
+    existingTransformacaoIds.add(newId);
+    transformacoes.push({ ...t, id: newId });
+  }
+
   const descartados =
     rawAdversarias.length - adversarias.length +
     (rawEncontros.length - encontros.length) +
-    (rawAmbientes.length - ambientes.length);
+    (rawAmbientes.length - ambientes.length) +
+    (rawTransformacoes.length - transformacoes.length);
 
-  return { ok: true, adversarias, encontros, ambientes, descartados };
+  return { ok: true, adversarias, encontros, ambientes, transformacoes, descartados };
 }

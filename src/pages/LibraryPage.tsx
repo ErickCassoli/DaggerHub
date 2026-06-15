@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import type { Adversary, Patamar, Tipo } from '@/types/adversary';
 import type { Encounter } from '@/types/encounter';
 import type { Ambiente } from '@/types/ambiente';
+import type { Transformacao } from '@/types/transformacao';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { AppHeader } from '@/components/nav/AppHeader';
@@ -16,6 +17,7 @@ import { ExportFavoritesButton } from '@/components/library/ExportFavoritesButto
 import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
 import { useEncounterLibrary } from '@/hooks/useEncounterLibrary';
 import { useAmbienteLibrary } from '@/hooks/useAmbienteLibrary';
+import { useTransformacaoLibrary } from '@/hooks/useTransformacaoLibrary';
 import { useLibraryFavorites } from '@/hooks/useLibraryFavorites';
 import { exportJson } from '@/lib/export';
 import { TIPOS } from '@/data/tipos';
@@ -59,6 +61,7 @@ export function LibraryPage() {
   const { items, remove, duplicate, importOne, reTier } = useAdversaryLibrary();
   const { importOne: importEncounter } = useEncounterLibrary();
   const { importOne: importAmbiente } = useAmbienteLibrary();
+  const { importOne: importTransformacao } = useTransformacaoLibrary();
   const { favorites, toggle } = useLibraryFavorites();
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [query, setQuery] = useState('');
@@ -104,14 +107,17 @@ export function LibraryPage() {
     adversarias: Adversary[],
     encontros: Encounter[],
     ambientes: Ambiente[],
+    transformacoes: Transformacao[],
   ) => {
     adversarias.forEach((a) => importOne(a));
     encontros.forEach((e) => importEncounter(e));
     ambientes.forEach((a) => importAmbiente(a));
+    transformacoes.forEach((t) => importTransformacao(t));
     const parts = [
       adversarias.length > 0 ? `${adversarias.length} adversária${adversarias.length !== 1 ? 's' : ''}` : '',
       encontros.length > 0 ? `${encontros.length} encontro${encontros.length !== 1 ? 's' : ''}` : '',
       ambientes.length > 0 ? `${ambientes.length} ambiente${ambientes.length !== 1 ? 's' : ''}` : '',
+      transformacoes.length > 0 ? `${transformacoes.length} transformação${transformacoes.length !== 1 ? 'ões' : ''}` : '',
     ].filter(Boolean);
     setToast(`Pacote importado: ${parts.join(', ')}.`);
     setTimeout(() => setToast(null), 4000);
