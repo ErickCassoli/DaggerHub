@@ -149,9 +149,9 @@ export function AmbientesPage() {
               </button>
             </div>
           ) : (
-            <div className="columns-1 gap-6 sm:columns-[470px]">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {filtered.map((amb) => (
-                <div key={amb.id} className="mb-6 break-inside-avoid">
+                <div key={amb.id}>
                   <AmbienteCard
                     ambiente={amb}
                     onDuplicate={() => duplicate(amb.id)}

@@ -30,9 +30,9 @@ export function LibraryGrid({
   }
 
   return (
-    <div className="columns-1 gap-6 sm:columns-[470px]">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       {items.map((adv) => (
-        <div key={adv.id} className="mb-6 break-inside-avoid">
+        <div key={adv.id}>
           <AdversaryCard
             adversary={adv}
             isFavorite={favorites.has(adv.id)}

@@ -236,9 +236,9 @@ export function BestiarioPage() {
             {Math.min(page * PAGE_SIZE, results.length)} de {results.length}
           </p>
 
-          <div className="columns-1 gap-6 sm:columns-[470px]">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {pageItems.map((adv) => (
-              <div key={adv.id} className="mb-6 break-inside-avoid">
+              <div key={adv.id}>
                 <BestiarioCard
                   adversary={adv}
                   isFavorite={favorites.has(adv.id)}

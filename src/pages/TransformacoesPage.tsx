@@ -111,9 +111,9 @@ export function TransformacoesPage() {
               </button>
             </div>
           ) : (
-            <div className="columns-1 gap-6 sm:columns-[470px]">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {filtered.map((t) => (
-                <div key={t.id} className="mb-6 break-inside-avoid">
+                <div key={t.id}>
                   <TransformacaoCard
                     transformacao={t}
                     onDuplicate={() => duplicate(t.id)}
