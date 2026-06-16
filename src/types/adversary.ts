@@ -67,6 +67,8 @@ export interface Adversary {
   habilidades: Ability[];
   /** Origem do conteúdo oficial; ausente em homebrew do usuário. */
   fonte?: AdversaryFonte;
+  /** Tags de organização (metadado, não aparece no stat block). */
+  tags?: string[];
   criadoEm: string;
   atualizadoEm: string;
 }

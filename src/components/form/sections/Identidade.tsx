@@ -101,6 +101,27 @@ export function Identidade() {
           />
           <FieldError message={errors.motivacoes?.message as string | undefined} />
         </div>
+
+        <div className="md:col-span-2">
+          <label className="field-label" htmlFor="tags">
+            Tags (opcional — Enter ou vírgula para adicionar)
+          </label>
+          <Controller
+            control={form.control}
+            name="tags"
+            render={({ field }) => (
+              <TagInput
+                id="tags"
+                value={field.value ?? []}
+                onChange={(next) => field.onChange(next.map((t) => t.toLowerCase()))}
+                placeholder="floresta, goblin, facção-vermelha…"
+              />
+            )}
+          />
+          <p className="mt-1 text-xs text-ink/50">
+            Tags ajudam a organizar a biblioteca (não aparecem no stat block exportado).
+          </p>
+        </div>
       </div>
     </Section>
   );
