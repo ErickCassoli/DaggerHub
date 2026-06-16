@@ -67,6 +67,19 @@ export function AdversaryCard({
         <Button size="sm" variant="secondary" onClick={onExportJson}>JSON</Button>
         <Button size="sm" variant="danger" onClick={onDelete}>Excluir</Button>
       </div>
+
+      {(adversary.tags ?? []).length > 0 && (
+        <div className="flex w-full max-w-[450px] flex-wrap gap-1.5">
+          {(adversary.tags ?? []).map((tag) => (
+            <span
+              key={tag}
+              className="rounded bg-ink/10 px-1.5 py-0.5 text-xs text-ink/60 dark:bg-white/10 dark:text-ink/50"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
     </article>
   );
 }

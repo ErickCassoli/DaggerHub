@@ -55,6 +55,7 @@ export const adversarySchema = z
     experiencias: z.array(experienceSchema),
     habilidades: z.array(abilitySchema),
     fonte: z.enum(ADVERSARY_FONTE_VALUES).optional(),
+    tags: z.array(z.string().trim().min(1).max(30)).max(20).optional(),
     criadoEm: z.string(),
     atualizadoEm: z.string(),
   })

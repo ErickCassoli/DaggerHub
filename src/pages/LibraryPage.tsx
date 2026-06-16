@@ -68,6 +68,7 @@ export function LibraryPage() {
   const [selectedTipos, setSelectedTipos] = useState<Set<Tipo>>(new Set());
   const [selectedPatamares, setSelectedPatamares] = useState<Set<Patamar>>(new Set());
   const [sortKey, setSortKey] = useState<'recente' | 'nome'>('recente');
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<string | null>(null);
   const [convertOpen, setConvertOpen] = useState(false);
 
@@ -76,12 +77,19 @@ export function LibraryPage() {
     [items, favorites],
   );
 
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    items.forEach((adv) => (adv.tags ?? []).forEach((t) => tagSet.add(t)));
+    return [...tagSet].sort();
+  }, [items]);
+
   const filteredItems = useMemo(() => {
     const q = normalizeSearch(query.trim());
     const base = showFavoritesOnly ? favoriteItems : items;
     const filtered = base.filter((adv) => {
       if (selectedTipos.size > 0 && !selectedTipos.has(adv.tipo)) return false;
       if (selectedPatamares.size > 0 && !selectedPatamares.has(adv.patamar)) return false;
+      if (selectedTags.size > 0 && !(adv.tags ?? []).some((t) => selectedTags.has(t))) return false;
       if (!q) return true;
       return normalizeSearch(`${adv.nome} ${adv.descricao ?? ''}`).includes(q);
     });
@@ -93,10 +101,10 @@ export function LibraryPage() {
     return [...filtered].sort(
       (a, b) => new Date(b.atualizadoEm).getTime() - new Date(a.atualizadoEm).getTime(),
     );
-  }, [items, favoriteItems, showFavoritesOnly, query, selectedTipos, selectedPatamares, sortKey]);
+  }, [items, favoriteItems, showFavoritesOnly, query, selectedTipos, selectedPatamares, sortKey, selectedTags]);
 
   const hasActiveFilters =
-    query.trim() !== '' || selectedTipos.size > 0 || selectedPatamares.size > 0;
+    query.trim() !== '' || selectedTipos.size > 0 || selectedPatamares.size > 0 || selectedTags.size > 0;
 
   const confirmDelete = (id: string) => {
     const adv = items.find((i) => i.id === id);
@@ -194,6 +202,7 @@ export function LibraryPage() {
               setQuery('');
               setSelectedTipos(new Set());
               setSelectedPatamares(new Set());
+              setSelectedTags(new Set());
             }}
             className="ml-1 text-sm text-ink/60 underline hover:text-ink/80"
           >
@@ -201,6 +210,21 @@ export function LibraryPage() {
           </button>
         ) : null}
       </div>
+
+      {allTags.length > 0 && (
+        <div className="mb-3 flex flex-wrap items-center gap-1.5">
+          <span className="field-label mr-1">Tags:</span>
+          {allTags.map((tag) => (
+            <FilterChip
+              key={tag}
+              active={selectedTags.has(tag)}
+              onClick={() => setSelectedTags((prev) => toggleSet(prev, tag))}
+            >
+              {tag}
+            </FilterChip>
+          ))}
+        </div>
+      )}
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <button

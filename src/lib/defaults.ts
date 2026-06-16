@@ -37,6 +37,7 @@ export function blankAdversary(): Adversary {
     ],
     experiencias: [],
     habilidades: [],
+    tags: [],
     criadoEm: now,
     atualizadoEm: now,
   };
