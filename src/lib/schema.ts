@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ABILITY_KIND_VALUES, TIPO_VALUES } from '@/types/adversary';
+import { ABILITY_KIND_VALUES, ADVERSARY_FONTE_VALUES, TIPO_VALUES } from '@/types/adversary';
 
 /** Formato aceito: "1d8+2 fís", "2d6 mág", "3d10-1 fís". Dano fixo também: "7 fís". */
 export const danoRegex = /^(\d+(d\d+)?([+-]\d+)?)\s+(fís|mág)$/i;
@@ -54,6 +54,7 @@ export const adversarySchema = z
     ataques: z.array(attackSchema).min(1, 'Inclua ao menos 1 ataque'),
     experiencias: z.array(experienceSchema),
     habilidades: z.array(abilitySchema),
+    fonte: z.enum(ADVERSARY_FONTE_VALUES).optional(),
     criadoEm: z.string(),
     atualizadoEm: z.string(),
   })

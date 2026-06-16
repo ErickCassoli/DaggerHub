@@ -1,5 +1,13 @@
 export type Patamar = 1 | 2 | 3 | 4;
 
+export const ADVERSARY_FONTE_VALUES = ['livro_basico', 'hope_and_fear'] as const;
+export type AdversaryFonte = (typeof ADVERSARY_FONTE_VALUES)[number];
+
+export const ADVERSARY_FONTE_LABEL: Record<AdversaryFonte, string> = {
+  livro_basico: 'Livro Básico',
+  hope_and_fear: 'Hope & Fear',
+};
+
 export const TIPO_VALUES = [
   'brutamonte',
   'horda',
@@ -57,6 +65,8 @@ export interface Adversary {
   ataques: Attack[];
   experiencias: Experience[];
   habilidades: Ability[];
+  /** Origem do conteúdo oficial; ausente em homebrew do usuário. */
+  fonte?: AdversaryFonte;
   criadoEm: string;
   atualizadoEm: string;
 }
