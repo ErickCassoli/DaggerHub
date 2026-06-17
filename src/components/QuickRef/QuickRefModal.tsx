@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import clsx from 'clsx';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { Button } from '@/components/ui/Button';
 import { TIER_BASELINES } from '@/data/baselines';
 import {
@@ -33,6 +34,8 @@ const TIPO_ORDER: Tipo[] = [
 
 export function QuickRefModal({ open, onClose }: QuickRefModalProps) {
   const [activePatamar, setActivePatamar] = useState<Patamar>(1);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, open, onClose);
 
   if (!open) return null;
 
@@ -44,11 +47,15 @@ export function QuickRefModal({ open, onClose }: QuickRefModalProps) {
       onClick={onClose}
     >
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="quickref-modal-title"
         className="flex max-h-[calc(100vh-1rem)] w-full max-w-3xl flex-col rounded-md border border-ink/30 bg-parchment shadow-xl sm:max-h-[min(90vh,700px)]"
         onClick={(e) => e.stopPropagation()}
       >
         <header className="flex shrink-0 items-center justify-between border-b border-ink/20 px-4 py-3">
-          <h2 className="font-display text-lg uppercase tracking-wide text-ink">
+          <h2 id="quickref-modal-title" className="font-display text-lg uppercase tracking-wide text-ink">
             Referência Rápida
           </h2>
           <Button size="sm" variant="ghost" onClick={onClose} aria-label="Fechar">

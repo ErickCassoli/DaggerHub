@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/Button';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { PATAMARES } from '@/data/patamares';
@@ -23,6 +24,8 @@ export function GeneratorModal({ open, onClose, onConfirm }: GeneratorModalProps
   const [patamar, setPatamar] = useState<Patamar>(1);
   const [entries, setEntries] = useState<GeneratedEntry[]>([]);
   const [generated, setGenerated] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, open, onClose);
 
   const budget = BASE_POINTS_PER_PC * Math.max(1, numPC) + BASE_POINTS_FLAT;
 
@@ -43,9 +46,15 @@ export function GeneratorModal({ open, onClose, onConfirm }: GeneratorModalProps
       className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 dark:bg-black/60 p-2 sm:p-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="flex max-h-[calc(100vh-1rem)] w-full max-w-md flex-col rounded-md border border-ink/30 bg-parchment shadow-xl dark:bg-[var(--parchment-bg)]">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="gen-modal-title"
+        className="flex max-h-[calc(100vh-1rem)] w-full max-w-md flex-col rounded-md border border-ink/30 bg-parchment shadow-xl dark:bg-[var(--parchment-bg)]"
+      >
         <header className="flex items-center justify-between border-b border-ink/20 px-4 py-3">
-          <h2 className="font-display text-lg uppercase tracking-wide text-ink">
+          <h2 id="gen-modal-title" className="font-display text-lg uppercase tracking-wide text-ink">
             Gerar encontro
           </h2>
           <Button size="sm" variant="ghost" onClick={onClose} aria-label="Fechar">

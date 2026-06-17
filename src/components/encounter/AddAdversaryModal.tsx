@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import type { Adversary, Patamar, Tipo } from '@/types/adversary';
 import { TIPOS, TIPO_LABEL } from '@/data/tipos';
@@ -6,6 +6,7 @@ import { PATAMARES, PATAMAR_LABEL } from '@/data/patamares';
 import { BATTLE_POINT_COST } from '@/data/encounterRules';
 import { searchAdversaries } from '@/lib/adversarySources';
 import { useBestiarioFavorites } from '@/hooks/useBestiarioFavorites';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
@@ -27,6 +28,8 @@ export function AddAdversaryModal({ open, biblioteca, onClose, onPick }: AddAdve
   const [patamar, setPatamar] = useState<Patamar | ''>('');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const { favorites } = useBestiarioFavorites();
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, open, onClose);
 
   const results = useMemo(() => {
     const base = searchAdversaries(biblioteca, {
@@ -45,9 +48,15 @@ export function AddAdversaryModal({ open, biblioteca, onClose, onPick }: AddAdve
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 dark:bg-black/60 p-2 sm:p-4">
-      <div className="flex max-h-[calc(100vh-1rem)] w-full max-w-3xl flex-col rounded-md border border-ink/30 bg-parchment shadow-xl sm:max-h-[min(90vh,800px)]">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="add-adv-modal-title"
+        className="flex max-h-[calc(100vh-1rem)] w-full max-w-3xl flex-col rounded-md border border-ink/30 bg-parchment shadow-xl sm:max-h-[min(90vh,800px)]"
+      >
         <header className="flex items-center justify-between border-b border-ink/20 px-4 py-3">
-          <h2 className="font-display text-lg uppercase tracking-wide text-ink">
+          <h2 id="add-adv-modal-title" className="font-display text-lg uppercase tracking-wide text-ink">
             Adicionar adversária
           </h2>
           <Button size="sm" variant="ghost" onClick={onClose} aria-label="Fechar">✕</Button>
