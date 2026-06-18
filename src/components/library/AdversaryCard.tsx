@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import type { Adversary, Patamar } from '@/types/adversary';
@@ -5,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { StatsBlock } from '@/components/StatsBlock/StatsBlock';
 import { FitBlock } from '@/components/StatsBlock/FitBlock';
 import { PATAMARES } from '@/data/patamares';
+import { buildAdversaryShareUrl } from '@/lib/shareUtils';
 
 interface AdversaryCardProps {
   adversary: Adversary;
@@ -25,6 +27,19 @@ export function AdversaryCard({
   onExportJson,
   onReTier,
 }: AdversaryCardProps) {
+  const [shareFeedback, setShareFeedback] = useState<'idle' | 'ok' | 'long'>('idle');
+
+  async function handleShare() {
+    const url = buildAdversaryShareUrl(adversary);
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareFeedback(url.length > 1800 ? 'long' : 'ok');
+      setTimeout(() => setShareFeedback('idle'), 2500);
+    } catch {
+      window.prompt('Copie o link de compartilhamento:', url);
+    }
+  }
+
   return (
     <article className="flex w-full flex-col items-center gap-3">
       <FitBlock>
@@ -65,6 +80,14 @@ export function AdversaryCard({
           ))}
         </select>
         <Button size="sm" variant="secondary" onClick={onExportJson}>JSON</Button>
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={handleShare}
+          title={shareFeedback === 'long' ? 'Link muito longo (pode não funcionar em alguns apps)' : 'Copiar link de compartilhamento'}
+        >
+          {shareFeedback === 'ok' ? '✓ Copiado!' : shareFeedback === 'long' ? '⚠ Link longo' : 'Compartilhar'}
+        </Button>
         <Button size="sm" variant="danger" onClick={onDelete}>Excluir</Button>
       </div>
 

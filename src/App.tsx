@@ -30,6 +30,9 @@ const TransformacaoBuilderPage = lazy(() =>
     default: m.TransformacaoBuilderPage,
   })),
 );
+const SharePage = lazy(() =>
+  import('./pages/SharePage').then((m) => ({ default: m.SharePage })),
+);
 
 /**
  * Remonta a página quando o `:id` da rota muda (ou entre `/new` e `/edit/:id`).
@@ -118,6 +121,7 @@ export default function App() {
           <Route path="/transformacoes" element={<TransformacoesPage />} />
           <Route path="/transformacoes/new" element={<Keyed><TransformacaoBuilderPage /></Keyed>} />
           <Route path="/transformacoes/edit/:id" element={<Keyed><TransformacaoBuilderPage /></Keyed>} />
+          <Route path="/share" element={<SharePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
