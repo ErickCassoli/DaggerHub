@@ -16,7 +16,8 @@ import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
 import { useBestiarioFavorites } from '@/hooks/useBestiarioFavorites';
 import { cloneBestiarioToLibrary } from '@/lib/adversarySources';
 import { normalizeSearch } from '@/lib/normalize';
-import type { Adversary, Patamar, Tipo } from '@/types/adversary';
+import type { Adversary, AdversaryFonte, Patamar, Tipo } from '@/types/adversary';
+import { ADVERSARY_FONTE_LABEL, ADVERSARY_FONTE_VALUES } from '@/types/adversary';
 
 const PAGE_SIZE = 10;
 
@@ -65,6 +66,7 @@ export function BestiarioPage() {
   const [query, setQuery] = useState('');
   const [tipos, setTipos] = useState<Set<Tipo>>(new Set());
   const [patamares, setPatamares] = useState<Set<Patamar>>(new Set());
+  const [fontes, setFontes] = useState<Set<AdversaryFonte>>(new Set());
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -75,11 +77,12 @@ export function BestiarioPage() {
       if (showFavoritesOnly && !favorites.has(adv.id)) return false;
       if (tipos.size > 0 && !tipos.has(adv.tipo)) return false;
       if (patamares.size > 0 && !patamares.has(adv.patamar)) return false;
+      if (fontes.size > 0 && !fontes.has(adv.fonte ?? 'livro_basico')) return false;
       if (!q) return true;
       const hay = normalizeSearch(`${adv.nome} ${adv.descricao ?? ''}`);
       return hay.includes(q);
     });
-  }, [query, tipos, patamares, showFavoritesOnly, favorites]);
+  }, [query, tipos, patamares, fontes, showFavoritesOnly, favorites]);
 
   const favoriteItems = useMemo(
     () => ALL_BESTIARIO.filter((adv) => favorites.has(adv.id)),
@@ -92,7 +95,7 @@ export function BestiarioPage() {
   // (o clamp abaixo cobre o caso da lista encolher no modo "só favoritas").
   useEffect(() => {
     setPage(1);
-  }, [query, tipos, patamares, showFavoritesOnly]);
+  }, [query, tipos, patamares, fontes, showFavoritesOnly]);
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
@@ -171,11 +174,12 @@ export function BestiarioPage() {
             {p.label}
           </FilterChip>
         ))}
-        {tipos.size > 0 || patamares.size > 0 ? (
+        {tipos.size > 0 || patamares.size > 0 || fontes.size > 0 ? (
           <button
             onClick={() => {
               setTipos(new Set());
               setPatamares(new Set());
+              setFontes(new Set());
             }}
             className="ml-1 text-sm text-ink/60 underline hover:text-ink/80"
           >
@@ -183,6 +187,21 @@ export function BestiarioPage() {
           </button>
         ) : null}
       </div>
+
+      {BESTIARIO_EXPANSAO.length > 0 && (
+        <div className="mb-3 flex flex-wrap items-center gap-1.5">
+          <span className="field-label mr-1">Fonte:</span>
+          {ADVERSARY_FONTE_VALUES.map((f) => (
+            <FilterChip
+              key={f}
+              active={fontes.has(f)}
+              onClick={() => setFontes((prev) => toggleInSet(prev, f))}
+            >
+              {ADVERSARY_FONTE_LABEL[f]}
+            </FilterChip>
+          ))}
+        </div>
+      )}
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <button

@@ -36,6 +36,15 @@ export const KEYWORDS = [
   'Físico',
   'Mágico',
   'Direto',
+  // Hope & Fear — Domínios do Terror e Transformações (provisório, confirmar com PDF ~ago/2026)
+  'Maldição',
+  'Transformado',
+  'Forma Sombria',
+  'Forma Animal',
+  'Dread',
+  'Domínio',
+  'Esperança Corrompida',
+  'Espírito',
 ] as const;
 
 export type Keyword = (typeof KEYWORDS)[number];
