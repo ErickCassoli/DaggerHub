@@ -20,13 +20,27 @@ interface AddAdversaryModalProps {
 
 type OrigemFilter = 'todos' | 'biblioteca' | 'bestiario';
 
+function toggleSet<T>(set: Set<T>, value: T): Set<T> {
+  const next = new Set(set);
+  if (next.has(value)) next.delete(value);
+  else next.add(value);
+  return next;
+}
+
 export function AddAdversaryModal({ open, biblioteca, onClose, onPick }: AddAdversaryModalProps) {
   const [query, setQuery] = useState('');
   const [origem, setOrigem] = useState<OrigemFilter>('todos');
   const [tipo, setTipo] = useState<Tipo | ''>('');
   const [patamar, setPatamar] = useState<Patamar | ''>('');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
   const { favorites } = useBestiarioFavorites();
+
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    biblioteca.forEach((adv) => (adv.tags ?? []).forEach((t) => tagSet.add(t)));
+    return [...tagSet].sort();
+  }, [biblioteca]);
 
   const results = useMemo(() => {
     const base = searchAdversaries(biblioteca, {
@@ -34,14 +48,17 @@ export function AddAdversaryModal({ open, biblioteca, onClose, onPick }: AddAdve
       origem,
       tipo: tipo || undefined,
       patamar: patamar || undefined,
+      tags: selectedTags.size > 0 ? selectedTags : undefined,
     });
     if (!showFavoritesOnly) return base;
     return base.filter(
       ({ adversary, origem: o }) => o !== 'bestiario' || favorites.has(adversary.id),
     );
-  }, [biblioteca, query, origem, tipo, patamar, showFavoritesOnly, favorites]);
+  }, [biblioteca, query, origem, tipo, patamar, showFavoritesOnly, favorites, selectedTags]);
 
   if (!open) return null;
+
+  const showTagFilter = allTags.length > 0 && origem !== 'bestiario';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 dark:bg-black/60 p-2 sm:p-4">
@@ -85,7 +102,8 @@ export function AddAdversaryModal({ open, biblioteca, onClose, onPick }: AddAdve
               </Select>
             </div>
           </div>
-          <div>
+
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={() => setShowFavoritesOnly((v) => !v)}
@@ -106,6 +124,37 @@ export function AddAdversaryModal({ open, biblioteca, onClose, onPick }: AddAdve
               )}
             </button>
           </div>
+
+          {showTagFilter && (
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="field-label mr-1 shrink-0">Tags:</span>
+              {allTags.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => setSelectedTags((prev) => toggleSet(prev, tag))}
+                  aria-pressed={selectedTags.has(tag)}
+                  className={clsx(
+                    'rounded border px-2 py-0.5 text-xs font-semibold transition-colors',
+                    selectedTags.has(tag)
+                      ? 'border-gold bg-gold/20 text-amber-800 dark:text-amber-400'
+                      : 'border-ink/30 bg-parchment dark:bg-white/5 text-ink/60 hover:border-gold/50 hover:text-ink/80',
+                  )}
+                >
+                  {tag}
+                </button>
+              ))}
+              {selectedTags.size > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedTags(new Set())}
+                  className="text-xs text-ink/60 underline hover:text-ink/80"
+                >
+                  Limpar
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="flex-1 overflow-y-auto p-4">
@@ -113,51 +162,73 @@ export function AddAdversaryModal({ open, biblioteca, onClose, onPick }: AddAdve
             <p className="rounded border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-6 text-center text-sm text-ink/70">
               {showFavoritesOnly
                 ? 'Nenhuma adversária favoritada corresponde aos filtros. Adicione favoritos no Bestiário primeiro.'
-                : origem === 'bestiario'
-                  ? 'O bestiário oficial ainda não foi populado.'
-                  : 'Nada encontrado. Ajuste os filtros ou crie uma adversária na biblioteca.'}
+                : selectedTags.size > 0
+                  ? 'Nenhuma adversária da biblioteca tem essas tags. Ajuste os filtros ou adicione tags às adversárias na Biblioteca.'
+                  : origem === 'bestiario'
+                    ? 'O bestiário oficial ainda não foi populado.'
+                    : 'Nada encontrado. Ajuste os filtros ou crie uma adversária na biblioteca.'}
             </p>
           ) : (
             <ul className="space-y-2">
-              {results.map(({ adversary, origem: resultOrigem }) => (
-                <li
-                  key={`${resultOrigem}:${adversary.id}`}
-                  className="flex flex-wrap items-center gap-3 rounded border border-ink/20 bg-white/60 dark:bg-white/5 px-3 py-2"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-semibold text-ink">
-                      {resultOrigem === 'bestiario' && favorites.has(adversary.id) && (
-                        <span
-                          className="mr-1 text-amber-500 dark:text-amber-400"
-                          aria-label="Favoritada no bestiário"
-                        >
-                          ★
-                        </span>
-                      )}
-                      {adversary.nome}
-                      {resultOrigem === 'bestiario' ? (
-                        <span className="ml-2 rounded bg-gold/20 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-ink/70">
-                          oficial
-                        </span>
-                      ) : null}
-                    </p>
-                    <p className="text-xs text-ink/60">
-                      {TIPO_LABEL[adversary.tipo]} · {PATAMAR_LABEL[adversary.patamar]} ·{' '}
-                      {adversary.tipo === 'lacaio'
-                        ? '1 PB / conjunto de PCs'
-                        : `${BATTLE_POINT_COST[adversary.tipo]} PB`}
-                    </p>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="primary"
-                    type="button"
-                    onClick={() => onPick(adversary, resultOrigem)}
+              {results.map(({ adversary, origem: resultOrigem }) => {
+                const tags = resultOrigem === 'biblioteca' ? (adversary.tags ?? []) : [];
+                return (
+                  <li
+                    key={`${resultOrigem}:${adversary.id}`}
+                    className="flex flex-wrap items-center gap-3 rounded border border-ink/20 bg-white/60 dark:bg-white/5 px-3 py-2"
                   >
-                    Adicionar
-                  </Button>
-                </li>
-              ))}
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-semibold text-ink">
+                        {resultOrigem === 'bestiario' && favorites.has(adversary.id) && (
+                          <span
+                            className="mr-1 text-amber-500 dark:text-amber-400"
+                            aria-label="Favoritada no bestiário"
+                          >
+                            ★
+                          </span>
+                        )}
+                        {adversary.nome}
+                        {resultOrigem === 'bestiario' ? (
+                          <span className="ml-2 rounded bg-gold/20 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-ink/70">
+                            oficial
+                          </span>
+                        ) : null}
+                      </p>
+                      <p className="text-xs text-ink/60">
+                        {TIPO_LABEL[adversary.tipo]} · {PATAMAR_LABEL[adversary.patamar]} ·{' '}
+                        {adversary.tipo === 'lacaio'
+                          ? '1 PB / conjunto de PCs'
+                          : `${BATTLE_POINT_COST[adversary.tipo]} PB`}
+                      </p>
+                      {tags.length > 0 && (
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className={clsx(
+                                'rounded px-1.5 py-0.5 text-[10px] leading-none',
+                                selectedTags.has(tag)
+                                  ? 'bg-gold/30 text-amber-800 dark:text-amber-400'
+                                  : 'bg-ink/10 text-ink/60 dark:bg-white/10 dark:text-ink/50',
+                              )}
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="primary"
+                      type="button"
+                      onClick={() => onPick(adversary, resultOrigem)}
+                    >
+                      Adicionar
+                    </Button>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
