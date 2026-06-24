@@ -22,13 +22,15 @@ interface SearchOptions {
   origem?: 'todos' | 'biblioteca' | 'bestiario';
   tipo?: Adversary['tipo'];
   patamar?: Adversary['patamar'];
+  /** Filtra adversárias da biblioteca pelo conjunto de tags (OR). Não afeta entradas do bestiário. */
+  tags?: Set<string>;
 }
 
 export function searchAdversaries(
   biblioteca: Adversary[],
   options: SearchOptions = {},
 ): AdversarySearchResult[] {
-  const { query, origem = 'todos', tipo, patamar } = options;
+  const { query, origem = 'todos', tipo, patamar, tags } = options;
   const q = normalizeSearch(query?.trim() ?? '');
 
   const fromLibrary: AdversarySearchResult[] =
@@ -43,9 +45,14 @@ export function searchAdversaries(
 
   const all = [...fromLibrary, ...fromBestiary];
 
-  return all.filter(({ adversary }) => {
+  return all.filter(({ adversary, origem: entryOrigem }) => {
     if (tipo && adversary.tipo !== tipo) return false;
     if (patamar && adversary.patamar !== patamar) return false;
+    // Tags são metadados de homebrew; adversárias do bestiário não as têm.
+    if (tags && tags.size > 0 && entryOrigem === 'biblioteca') {
+      const advTags = adversary.tags ?? [];
+      if (!advTags.some((t) => tags.has(t))) return false;
+    }
     if (!q) return true;
     const haystack = normalizeSearch(
       `${adversary.nome} ${adversary.descricao ?? ''} ${adversary.motivacoes?.join(' ') ?? ''}`,
