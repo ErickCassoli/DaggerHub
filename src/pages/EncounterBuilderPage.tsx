@@ -10,6 +10,8 @@ import { BudgetBar } from '@/components/encounter/BudgetBar';
 import { PartyConfig } from '@/components/encounter/PartyConfig';
 import { EntryRow } from '@/components/encounter/EntryRow';
 import { AddAdversaryModal } from '@/components/encounter/AddAdversaryModal';
+import { SessionTrackerModal } from '@/components/encounter/SessionTrackerModal';
+import type { InstanceState } from '@/components/encounter/SessionTrackerModal';
 import { EncounterSummaryBlock } from '@/components/encounter/EncounterSummaryBlock';
 import type { SummaryEntry } from '@/components/encounter/EncounterSummaryBlock';
 import { StatsBlock } from '@/components/StatsBlock/StatsBlock';
@@ -52,6 +54,9 @@ export function EncounterBuilderPage() {
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [sessionInstances, setSessionInstances] = useState<InstanceState[] | null>(null);
+  const [sessionMedo, setSessionMedo] = useState(0);
+  const [sessionOpen, setSessionOpen] = useState(false);
 
   const summaryExportRef = useRef<HTMLDivElement>(null);
   const blockNodesRef = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -137,6 +142,41 @@ export function EncounterBuilderPage() {
     setEncounter((prev) => ({ ...prev, entries: prev.entries.filter((e) => e.id !== entryId) }));
   };
 
+  const startSession = () => {
+    const instances = costBreakdown.porEntry.flatMap((p) => {
+      const adversary = p.adversary;
+      if (!adversary) return [];
+      const qty = encounter.entries.find((e) => e.id === p.entryId)?.quantidade ?? 1;
+      return Array.from({ length: qty }, (_, i) => ({
+        key: `${p.entryId}-${i}`,
+        nome: qty > 1 ? `${adversary.nome} ${i + 1}` : adversary.nome,
+        pvMax: adversary.pv,
+        pvAtual: adversary.pv,
+        estresse: 0,
+        limiarMaior: adversary.limiarMaior,
+        limiarGrave: adversary.limiarGrave,
+      }));
+    });
+    setSessionInstances(instances);
+    setSessionMedo(0);
+    setSessionOpen(true);
+  };
+
+  const updateSessionInstance = (
+    key: string,
+    updates: Partial<Pick<InstanceState, 'pvAtual' | 'estresse'>>,
+  ) => {
+    setSessionInstances((prev) =>
+      prev?.map((inst) => (inst.key === key ? { ...inst, ...updates } : inst)) ?? null,
+    );
+  };
+
+  const endSession = () => {
+    setSessionInstances(null);
+    setSessionMedo(0);
+    setSessionOpen(false);
+  };
+
   return (
     <div className="mx-auto max-w-7xl p-4 sm:p-6">
       <AppHeader
@@ -155,6 +195,15 @@ export function EncounterBuilderPage() {
             </Button>
             <Button type="button" variant="secondary" onClick={() => exportEncounterJson(encounter)}>
               JSON
+            </Button>
+            <Button
+              type="button"
+              variant="primary"
+              onClick={sessionInstances ? () => setSessionOpen(true) : startSession}
+              disabled={encounter.entries.length === 0}
+              title={encounter.entries.length === 0 ? 'Adicione adversárias primeiro' : undefined}
+            >
+              {sessionInstances ? '▶ Retomar' : '▶ Sessão'}
             </Button>
           </>
         }
@@ -247,6 +296,16 @@ export function EncounterBuilderPage() {
         biblioteca={biblioteca}
         onClose={() => setModalOpen(false)}
         onPick={addEntry}
+      />
+
+      <SessionTrackerModal
+        open={sessionOpen}
+        instances={sessionInstances ?? []}
+        medo={sessionMedo}
+        onUpdateInstance={updateSessionInstance}
+        onUpdateMedo={setSessionMedo}
+        onPause={() => setSessionOpen(false)}
+        onEnd={endSession}
       />
 
       {/* Off-screen nodes for PDF export */}
