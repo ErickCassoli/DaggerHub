@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/Button';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { Textarea } from '@/components/ui/Textarea';
 import { TIPO_LABEL } from '@/data/tipos';
 import { PATAMAR_LABEL } from '@/data/patamares';
@@ -15,14 +16,17 @@ interface ConvertFrom5eModalProps {
 export function ConvertFrom5eModal({ open, onClose, onConvert }: ConvertFrom5eModalProps) {
   const [text, setText] = useState('');
   const [preview, setPreview] = useState<ConvertFrom5eResult | null>(null);
-
-  if (!open) return null;
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   const handleClose = () => {
     onClose();
     setText('');
     setPreview(null);
   };
+
+  useFocusTrap(dialogRef, open, handleClose);
+
+  if (!open) return null;
 
   const handlePreview = () => {
     setPreview(convertFrom5e(text));
@@ -41,11 +45,15 @@ export function ConvertFrom5eModal({ open, onClose, onConvert }: ConvertFrom5eMo
       onClick={handleClose}
     >
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="convert5e-modal-title"
         className="flex max-h-[calc(100vh-1rem)] w-full max-w-2xl flex-col rounded-md border border-ink/30 bg-parchment shadow-xl sm:max-h-[min(90vh,780px)]"
         onClick={(e) => e.stopPropagation()}
       >
         <header className="flex shrink-0 items-center justify-between border-b border-ink/20 px-4 py-3">
-          <h2 className="font-display text-lg uppercase tracking-wide text-ink">
+          <h2 id="convert5e-modal-title" className="font-display text-lg uppercase tracking-wide text-ink">
             Converter de D&amp;D 5e
           </h2>
           <Button size="sm" variant="ghost" onClick={handleClose} aria-label="Fechar">
