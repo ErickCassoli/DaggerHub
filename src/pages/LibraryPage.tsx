@@ -271,16 +271,46 @@ export function LibraryPage() {
         </p>
       ) : null}
 
-      {showFavoritesOnly && favoriteItems.length === 0 ? (
+      {items.length === 0 ? (
+        <div className="rounded-md border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-10 text-center">
+          <p className="text-lg text-ink/70">Biblioteca vazia</p>
+          <p className="mt-2 text-sm text-ink/60">
+            Crie sua primeira adversária ou copie uma pronta do bestiário oficial.
+          </p>
+          <div className="mt-5 flex flex-wrap justify-center gap-3">
+            <Link to="/new">
+              <Button>+ Nova adversária</Button>
+            </Link>
+            <Link to="/bestiario">
+              <Button variant="secondary">Ver bestiário</Button>
+            </Link>
+          </div>
+        </div>
+      ) : showFavoritesOnly && favoriteItems.length === 0 ? (
         <div className="rounded-md border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-8 text-center">
           <p className="text-ink/70">Nenhum favorito salvo ainda.</p>
           <p className="mt-1 text-sm text-ink/60">
             Use o botão ☆ em qualquer adversária para marcá-la como favorita.
           </p>
         </div>
-      ) : filteredItems.length === 0 && items.length > 0 ? (
+      ) : filteredItems.length === 0 ? (
         <div className="rounded-md border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-8 text-center">
-          <p className="text-ink/70">Nenhuma adversária corresponde aos filtros.</p>
+          <p className="text-ink/70">
+            {query.trim()
+              ? `Nenhuma adversária encontrada para "${query}".`
+              : 'Nenhuma adversária corresponde aos filtros ativos.'}
+          </p>
+          <button
+            onClick={() => {
+              setQuery('');
+              setSelectedTipos(new Set());
+              setSelectedPatamares(new Set());
+              setSelectedTags(new Set());
+            }}
+            className="mt-2 text-sm text-gold hover:underline"
+          >
+            Limpar filtros
+          </button>
         </div>
       ) : (
         <LibraryGrid
