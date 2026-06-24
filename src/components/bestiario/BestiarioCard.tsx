@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import clsx from 'clsx';
 import type { Adversary, Patamar } from '@/types/adversary';
 import { Button } from '@/components/ui/Button';
 import { StatsBlock } from '@/components/StatsBlock/StatsBlock';
 import { FitBlock } from '@/components/StatsBlock/FitBlock';
 import { PATAMARES } from '@/data/patamares';
+import { buildAdversaryShareUrl } from '@/lib/shareUtils';
 
 interface BestiarioCardProps {
   adversary: Adversary;
@@ -20,6 +22,19 @@ export function BestiarioCard({
   onCopy,
   onCopyAsTier,
 }: BestiarioCardProps) {
+  const [shareFeedback, setShareFeedback] = useState<'idle' | 'ok' | 'long'>('idle');
+
+  async function handleShare() {
+    const url = buildAdversaryShareUrl(adversary);
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareFeedback(url.length > 1800 ? 'long' : 'ok');
+      setTimeout(() => setShareFeedback('idle'), 2500);
+    } catch {
+      window.prompt('Copie o link de compartilhamento:', url);
+    }
+  }
+
   return (
     <article className="flex w-full flex-col items-center gap-3">
       <div className="relative w-full">
@@ -49,6 +64,14 @@ export function BestiarioCard({
 
         <Button size="sm" variant="primary" onClick={onCopy}>
           Copiar para minha biblioteca
+        </Button>
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={handleShare}
+          title={shareFeedback === 'long' ? 'Link muito longo (pode não funcionar em alguns apps)' : 'Copiar link de compartilhamento'}
+        >
+          {shareFeedback === 'ok' ? '✓ Copiado!' : shareFeedback === 'long' ? '⚠ Link longo' : 'Compartilhar'}
         </Button>
         <select
           value=""
