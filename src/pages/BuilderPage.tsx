@@ -12,6 +12,7 @@ import { FitBlock } from '@/components/StatsBlock/FitBlock';
 import { Button } from '@/components/ui/Button';
 import { AppHeader } from '@/components/nav/AppHeader';
 import { exportJson, exportPdf, exportPng } from '@/lib/export';
+import { useKeyboardSave } from '@/hooks/useKeyboardSave';
 
 export function BuilderPage() {
   const navigate = useNavigate();
@@ -67,6 +68,8 @@ export function BuilderPage() {
     }
   }, []);
 
+  useKeyboardSave(() => form.handleSubmit(onSubmit, onInvalid)());
+
   const exportTargetNode = () => exportRef.current ?? previewRef.current;
 
   const doExportPng = async () => {
@@ -102,7 +105,7 @@ export function BuilderPage() {
         actions={
           <>
             <Link to="/" className="text-sm text-ink/70 underline">← Biblioteca</Link>
-            <Button type="submit" form="adversary-form" variant="primary">
+            <Button type="submit" form="adversary-form" variant="primary" title="Salvar (Ctrl+S)">
               Salvar
             </Button>
             <Button

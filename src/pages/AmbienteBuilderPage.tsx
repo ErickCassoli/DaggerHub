@@ -18,6 +18,7 @@ import {
   exportAmbientePng,
 } from '@/lib/ambienteExport';
 import { resolveAdversary } from '@/lib/adversarySources';
+import { useKeyboardSave } from '@/hooks/useKeyboardSave';
 
 export function AmbienteBuilderPage() {
   const navigate = useNavigate();
@@ -82,6 +83,8 @@ export function AmbienteBuilderPage() {
     }
   }, []);
 
+  useKeyboardSave(() => form.handleSubmit(onSubmit, onInvalid)());
+
   const exportTargetNode = () => exportRef.current ?? previewRef.current;
 
   const doExportPng = async () => {
@@ -115,7 +118,7 @@ export function AmbienteBuilderPage() {
         actions={
           <>
             <Link to="/ambientes" className="text-sm text-ink/70 underline">← Ambientes</Link>
-            <Button type="submit" form="ambiente-form" variant="primary">Salvar</Button>
+            <Button type="submit" form="ambiente-form" variant="primary" title="Salvar (Ctrl+S)">Salvar</Button>
             <Button
               type="button"
               variant="secondary"
