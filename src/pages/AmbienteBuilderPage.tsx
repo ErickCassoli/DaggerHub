@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { nanoid } from 'nanoid';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Ambiente } from '@/types/ambiente';
+import type { Encounter, EncounterEntry } from '@/types/encounter';
 import { ambienteSchema } from '@/lib/ambienteSchema';
 import { blankAmbiente } from '@/lib/ambienteDefaults';
 import { useAmbienteLibrary } from '@/hooks/useAmbienteLibrary';
 import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
+import { useEncounterLibrary } from '@/hooks/useEncounterLibrary';
 import { AmbienteForm } from '@/components/ambiente/AmbienteForm';
 import { AmbienteBlock } from '@/components/AmbienteBlock/AmbienteBlock';
 import { FitBlock } from '@/components/StatsBlock/FitBlock';
@@ -24,6 +27,7 @@ export function AmbienteBuilderPage() {
   const { id } = useParams<{ id: string }>();
   const { get, upsert } = useAmbienteLibrary();
   const { items: biblioteca } = useAdversaryLibrary();
+  const { upsert: upsertEncounter } = useEncounterLibrary();
 
   const initial = useMemo<Ambiente>(() => {
     if (id) {
@@ -108,6 +112,29 @@ export function AmbienteBuilderPage() {
 
   const doExportJson = () => exportAmbienteJson(preview);
 
+  const handleCreateEncounter = () => {
+    const patamarToNivel: Record<number, number> = { 1: 1, 2: 3, 3: 6, 4: 9 };
+    const entries: EncounterEntry[] = preview.adversariosSugeridos.map((ref) => ({
+      id: nanoid(8),
+      adversaryRef: ref.adversaryRef,
+      origem: ref.origem,
+      quantidade: 1,
+    }));
+    const enc: Encounter = {
+      id: nanoid(10),
+      nome: `Encontro — ${preview.nome || 'Ambiente'}`,
+      descricao: '',
+      party: { numPC: 4, nivelPC: patamarToNivel[preview.patamar] ?? 1 },
+      ajustes: [],
+      entries,
+      notas: '',
+      criadoEm: '',
+      atualizadoEm: '',
+    };
+    const saved = upsertEncounter(enc);
+    navigate(`/encounters/edit/${saved.id}`);
+  };
+
   return (
     <div className="mx-auto max-w-7xl p-4 sm:p-6">
       <AppHeader
@@ -142,6 +169,16 @@ export function AmbienteBuilderPage() {
             >
               JSON
             </Button>
+            {preview.adversariosSugeridos.length > 0 && (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleCreateEncounter}
+                title="Cria um encontro pré-populado com as adversárias sugeridas deste ambiente"
+              >
+                ⚔ Criar Encontro
+              </Button>
+            )}
           </>
         }
       />
