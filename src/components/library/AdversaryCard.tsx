@@ -55,7 +55,7 @@ export function AdversaryCard({
           className={clsx(
             'rounded border px-2 py-1 text-base leading-none transition-colors',
             isFavorite
-              ? 'border-gold bg-gold/20 text-amber-700 hover:bg-gold/30'
+              ? 'border-gold bg-gold/20 text-amber-700 dark:text-amber-400 hover:bg-gold/30'
               : 'border-ink/30 bg-parchment text-ink/40 hover:border-gold/60 hover:text-amber-600',
           )}
         >

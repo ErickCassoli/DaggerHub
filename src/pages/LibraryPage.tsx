@@ -40,7 +40,7 @@ function FilterChip({
       className={clsx(
         'rounded border px-2.5 py-0.5 text-sm font-semibold transition-colors',
         active
-          ? 'border-gold bg-gold/20 text-amber-800'
+          ? 'border-gold bg-gold/20 text-amber-800 dark:text-amber-400'
           : 'border-ink/30 bg-parchment text-ink/60 hover:border-gold/50 hover:text-ink/80',
       )}
     >
@@ -233,7 +233,7 @@ export function LibraryPage() {
           className={clsx(
             'flex items-center gap-1.5 rounded border px-3 py-1 text-sm font-semibold transition-colors',
             showFavoritesOnly
-              ? 'border-gold bg-gold/20 text-amber-800'
+              ? 'border-gold bg-gold/20 text-amber-800 dark:text-amber-400'
               : 'border-ink/30 bg-parchment text-ink/60 hover:border-gold/50 hover:text-ink/80',
           )}
         >
@@ -255,7 +255,7 @@ export function LibraryPage() {
               className={clsx(
                 'rounded border px-2.5 py-0.5 text-sm font-semibold transition-colors',
                 sortKey === k
-                  ? 'border-gold bg-gold/20 text-amber-800'
+                  ? 'border-gold bg-gold/20 text-amber-800 dark:text-amber-400'
                   : 'border-ink/30 bg-parchment text-ink/60 hover:border-gold/50 hover:text-ink/80',
               )}
             >
