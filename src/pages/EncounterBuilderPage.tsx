@@ -302,6 +302,7 @@ export function EncounterBuilderPage() {
         open={sessionOpen}
         instances={sessionInstances ?? []}
         medo={sessionMedo}
+        nomeEncontro={encounter.nome}
         onUpdateInstance={updateSessionInstance}
         onUpdateMedo={setSessionMedo}
         onPause={() => setSessionOpen(false)}

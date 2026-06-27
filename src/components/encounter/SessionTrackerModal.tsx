@@ -16,6 +16,7 @@ interface SessionTrackerModalProps {
   open: boolean;
   instances: InstanceState[];
   medo: number;
+  nomeEncontro?: string;
   onUpdateInstance: (
     key: string,
     updates: Partial<Pick<InstanceState, 'pvAtual' | 'estresse'>>,
@@ -23,6 +24,45 @@ interface SessionTrackerModalProps {
   onUpdateMedo: (value: number) => void;
   onPause: () => void;
   onEnd: () => void;
+}
+
+function buildReportText(
+  instances: InstanceState[],
+  medo: number,
+  nomeEncontro: string,
+  dataHoje: string,
+): string {
+  const titulo = nomeEncontro ? `Resumo de Sessão — ${nomeEncontro}` : 'Resumo de Sessão';
+  const linhas: string[] = [
+    `=== ${titulo} ===`,
+    `Data: ${dataHoje}`,
+    '',
+    'ADVERSÁRIAS:',
+  ];
+
+  for (const inst of instances) {
+    const isDead = inst.pvAtual === 0;
+    const isGrave = !isDead && inst.limiarGrave !== null && inst.pvAtual <= inst.limiarGrave;
+    const icon = isDead ? '✗' : isGrave ? '⚠' : '○';
+    const status = isDead ? 'Eliminada' : isGrave ? 'Limiar Grave' : 'Viva';
+    const details = `(${inst.pvAtual}/${inst.pvMax} PV, ${inst.estresse} Estresse)`;
+    linhas.push(`${icon} ${inst.nome.padEnd(20)} — ${status.padEnd(14)} ${details}`);
+  }
+
+  linhas.push('', `MEDO GLOBAL: ${medo} / 12`, '', 'Gerado por DaggerHub — https://erickcassoli.github.io/DaggerHub/');
+  return linhas.join('\n');
+}
+
+function downloadReport(instances: InstanceState[], medo: number, nomeEncontro: string) {
+  const hoje = new Date().toISOString().slice(0, 10);
+  const text = buildReportText(instances, medo, nomeEncontro, hoje);
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `sessao-${hoje}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function CounterButton({
@@ -53,6 +93,7 @@ export function SessionTrackerModal({
   open,
   instances,
   medo,
+  nomeEncontro = '',
   onUpdateInstance,
   onUpdateMedo,
   onPause,
@@ -282,6 +323,16 @@ export function SessionTrackerModal({
             </CounterButton>
             <span className="text-xs text-ink/40">/12</span>
           </div>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => downloadReport(instances, medo, nomeEncontro)}
+            disabled={instances.length === 0}
+            className="text-sm"
+            title="Exportar resumo da sessão como .txt"
+          >
+            📋 Exportar Resumo
+          </Button>
           <Button
             type="button"
             variant="ghost"
