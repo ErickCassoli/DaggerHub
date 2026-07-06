@@ -60,9 +60,16 @@ export function TransformacoesPage() {
       />
 
       {items.length === 0 ? (
-        <div className="rounded-md border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-8 text-center">
-          <p className="text-ink/70">Nenhuma transformação salva ainda.</p>
-          <p className="mt-1 text-sm text-ink/60">Crie a primeira no botão acima.</p>
+        <div className="rounded-md border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-10 text-center">
+          <p className="text-lg text-ink/70">Nenhuma transformação salva ainda</p>
+          <p className="mt-2 text-sm text-ink/60">
+            Crie a primeira transformação para modificar personagens ou adversárias.
+          </p>
+          <div className="mt-5 flex flex-wrap justify-center gap-3">
+            <Link to="/transformacoes/new">
+              <Button>+ Nova transformação</Button>
+            </Link>
+          </div>
         </div>
       ) : (
         <>

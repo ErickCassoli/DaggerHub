@@ -20,7 +20,7 @@ import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
 import { resolveAdversary } from '@/lib/adversarySources';
 import { useKeyboardSave } from '@/hooks/useKeyboardSave';
 import { balanceVerdict, calculateBudget, encounterCost } from '@/lib/encounter';
-import { exportEncounterJson, exportEncounterPdf } from '@/lib/encounterExport';
+import { exportEncounterJson, exportEncounterPdf, exportEncounterPng } from '@/lib/encounterExport';
 import type { Encounter, EncounterEntry } from '@/types/encounter';
 
 function blankEncounter(): Encounter {
@@ -54,7 +54,7 @@ export function EncounterBuilderPage() {
   const [encounter, setEncounter] = useState<Encounter>(initial);
   const [lastSavedEncounter, setLastSavedEncounter] = useState<Encounter | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [exporting, setExporting] = useState(false);
+  const [exporting, setExporting] = useState<'png' | 'pdf' | null>(null);
   const [sessionInstances, setSessionInstances] = useState<InstanceState[] | null>(null);
   const [sessionMedo, setSessionMedo] = useState(0);
   const [sessionOpen, setSessionOpen] = useState(false);
@@ -88,16 +88,26 @@ export function EncounterBuilderPage() {
     [costBreakdown, encounter.entries],
   );
 
+  const doExportPng = async () => {
+    if (!summaryExportRef.current) return;
+    try {
+      setExporting('png');
+      await exportEncounterPng(summaryExportRef.current, encounter.nome);
+    } finally {
+      setExporting(null);
+    }
+  };
+
   const doExportPdf = async () => {
     if (!summaryExportRef.current) return;
     const blockNodes = encounter.entries
       .map((e) => blockNodesRef.current.get(e.id))
       .filter((n): n is HTMLDivElement => n !== undefined);
     try {
-      setExporting(true);
+      setExporting('pdf');
       await exportEncounterPdf(summaryExportRef.current, blockNodes, encounter.nome);
     } finally {
-      setExporting(false);
+      setExporting(null);
     }
   };
 
@@ -191,12 +201,27 @@ export function EncounterBuilderPage() {
             <Button
               type="button"
               variant="secondary"
-              onClick={doExportPdf}
-              disabled={exporting || encounter.entries.length === 0}
+              onClick={doExportPng}
+              disabled={!!exporting || encounter.entries.length === 0}
+              title="Baixa o resumo do encontro como imagem PNG — ideal para compartilhar no Discord ou usar em VTTs"
             >
-              {exporting ? 'PDF…' : 'PDF'}
+              {exporting === 'png' ? 'Exportando…' : 'PNG'}
             </Button>
-            <Button type="button" variant="secondary" onClick={() => exportEncounterJson(encounter)}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={doExportPdf}
+              disabled={!!exporting || encounter.entries.length === 0}
+              title="Baixa o resumo do encontro e um stat block por adversária como PDF pronto para impressão"
+            >
+              {exporting === 'pdf' ? 'Exportando…' : 'PDF'}
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => exportEncounterJson(encounter)}
+              title="Baixa os dados em JSON — serve de backup e pode ser importado em outro navegador"
+            >
               JSON
             </Button>
             <Button
