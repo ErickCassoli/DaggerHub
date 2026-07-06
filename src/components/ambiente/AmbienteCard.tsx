@@ -11,9 +11,10 @@ interface AmbienteCardProps {
   onDuplicate: () => void;
   onDelete: () => void;
   onExportJson: () => void;
+  onCreateEncounter?: () => void;
 }
 
-export function AmbienteCard({ ambiente, onDuplicate, onDelete, onExportJson }: AmbienteCardProps) {
+export function AmbienteCard({ ambiente, onDuplicate, onDelete, onExportJson, onCreateEncounter }: AmbienteCardProps) {
   const { items: biblioteca } = useAdversaryLibrary();
   const adversarios = ambiente.adversariosSugeridos
     .map((a) => resolveAdversary(a.adversaryRef, a.origem, biblioteca)?.nome)
@@ -31,6 +32,11 @@ export function AmbienteCard({ ambiente, onDuplicate, onDelete, onExportJson }: 
         <Link to={`/ambientes/edit/${ambiente.id}`}>
           <Button size="sm" variant="primary">Editar</Button>
         </Link>
+        {onCreateEncounter && ambiente.adversariosSugeridos.length > 0 && (
+          <Button size="sm" variant="secondary" onClick={onCreateEncounter} title="Cria um encontro pré-populado com as adversárias sugeridas deste ambiente">
+            ⚔ Criar Encontro
+          </Button>
+        )}
         <Button size="sm" variant="secondary" onClick={onDuplicate}>Duplicar</Button>
         <Button size="sm" variant="secondary" onClick={onExportJson}>JSON</Button>
         <Button size="sm" variant="danger" onClick={onDelete}>Excluir</Button>
