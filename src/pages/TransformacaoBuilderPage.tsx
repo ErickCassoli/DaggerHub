@@ -17,6 +17,7 @@ import { Section } from '@/components/ui/Section';
 import { AppHeader } from '@/components/nav/AppHeader';
 import { FieldError } from '@/components/form/FieldError';
 import { KeywordChips } from '@/components/form/KeywordChips';
+import { useKeyboardSave } from '@/hooks/useKeyboardSave';
 import {
   exportTransformacaoJson,
   exportTransformacaoPdf,
@@ -112,6 +113,8 @@ export function TransformacaoBuilderPage() {
     }
   }, []);
 
+  useKeyboardSave(() => form.handleSubmit(onSubmit, onInvalid)());
+
   const exportTargetNode = () => exportRef.current ?? previewRef.current;
 
   const doExportPng = async () => {
@@ -147,7 +150,7 @@ export function TransformacaoBuilderPage() {
             <Link to="/transformacoes" className="text-sm text-ink/70 underline">
               ← Transformações
             </Link>
-            <Button type="submit" form="transformacao-form" variant="primary">Salvar</Button>
+            <Button type="submit" form="transformacao-form" variant="primary" title="Salvar (Ctrl+S)">Salvar</Button>
             <Button
               type="button"
               variant="secondary"

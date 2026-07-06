@@ -18,6 +18,7 @@ import { StatsBlock } from '@/components/StatsBlock/StatsBlock';
 import { useEncounterLibrary } from '@/hooks/useEncounterLibrary';
 import { useAdversaryLibrary } from '@/hooks/useAdversaryLibrary';
 import { resolveAdversary } from '@/lib/adversarySources';
+import { useKeyboardSave } from '@/hooks/useKeyboardSave';
 import { balanceVerdict, calculateBudget, encounterCost } from '@/lib/encounter';
 import { exportEncounterJson, exportEncounterPdf } from '@/lib/encounterExport';
 import type { Encounter, EncounterEntry } from '@/types/encounter';
@@ -107,6 +108,8 @@ export function EncounterBuilderPage() {
     if (!id) navigate(`/encounters/edit/${saved.id}`, { replace: true });
   };
 
+  useKeyboardSave(save);
+
   const addEntry = (adversary: { id: string }, origem: EncounterEntry['origem']) => {
     setEncounter((prev) => {
       const existing = prev.entries.find(
@@ -184,7 +187,7 @@ export function EncounterBuilderPage() {
         actions={
           <>
             <Link to="/encounters" className="text-sm text-ink/70 underline">← Encontros</Link>
-            <Button type="button" variant="primary" onClick={save}>Salvar</Button>
+            <Button type="button" variant="primary" onClick={save} title="Salvar (Ctrl+S)">Salvar</Button>
             <Button
               type="button"
               variant="secondary"
