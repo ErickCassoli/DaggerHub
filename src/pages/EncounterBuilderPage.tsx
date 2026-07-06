@@ -51,7 +51,7 @@ export function EncounterBuilderPage() {
   }, [id, get]);
 
   const [encounter, setEncounter] = useState<Encounter>(initial);
-  const [savedAt, setSavedAt] = useState<string | null>(null);
+  const [lastSavedEncounter, setLastSavedEncounter] = useState<Encounter | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [sessionInstances, setSessionInstances] = useState<InstanceState[] | null>(null);
@@ -103,7 +103,7 @@ export function EncounterBuilderPage() {
   const save = () => {
     const saved = upsert(encounter);
     setEncounter(saved);
-    setSavedAt(saved.atualizadoEm);
+    setLastSavedEncounter(saved);
     if (!id) navigate(`/encounters/edit/${saved.id}`, { replace: true });
   };
 
@@ -209,8 +209,8 @@ export function EncounterBuilderPage() {
         }
       />
 
-      {savedAt ? (
-        <p className="mb-3 rounded border border-green-800/30 bg-green-50 px-3 py-2 text-sm text-green-900">
+      {lastSavedEncounter && encounter === lastSavedEncounter ? (
+        <p className="mb-3 rounded border border-green-800/30 bg-green-50 dark:bg-green-950 px-3 py-2 text-sm text-green-900 dark:text-green-200 dark:border-green-700/30">
           Salvo no navegador (localStorage).
         </p>
       ) : null}
