@@ -107,9 +107,19 @@ export function EncountersPage() {
       />
 
       {items.length === 0 ? (
-        <div className="rounded-md border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-8 text-center">
-          <p className="text-ink/70">Nenhum encontro salvo ainda.</p>
-          <p className="mt-1 text-sm text-ink/60">Crie o primeiro no botão acima.</p>
+        <div className="rounded-md border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-10 text-center">
+          <p className="text-lg text-ink/70">Nenhum encontro salvo ainda</p>
+          <p className="mt-2 text-sm text-ink/60">
+            Monte um encontro do zero ou deixe o gerador sugerir um balanceado.
+          </p>
+          <div className="mt-5 flex flex-wrap justify-center gap-3">
+            <Link to="/encounters/new">
+              <Button>+ Novo encontro</Button>
+            </Link>
+            <Button variant="secondary" onClick={() => setGeneratorOpen(true)}>
+              ✦ Gerar encontro
+            </Button>
+          </div>
         </div>
       ) : (
         <>

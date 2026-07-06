@@ -1,6 +1,6 @@
 import type { Encounter } from '@/types/encounter';
 import { slugify } from '@/lib/slug';
-import { downloadBlob, nodeToPng } from '@/lib/exportUtils';
+import { downloadBlob, nodeToPng, triggerDownload } from '@/lib/exportUtils';
 
 export type EncounterJsonImportResult =
   | { ok: true; data: Encounter }
@@ -33,6 +33,12 @@ export async function parseEncounterJsonImport(file: File): Promise<EncounterJso
 export function exportEncounterJson(encounter: Encounter): void {
   const blob = new Blob([JSON.stringify(encounter, null, 2)], { type: 'application/json' });
   downloadBlob(blob, `${slugify(encounter.nome, 'encontro')}.json`);
+}
+
+/** Exporta apenas o bloco-resumo do encontro como imagem PNG (sem os stat blocks individuais). */
+export async function exportEncounterPng(summaryNode: HTMLElement, nome: string): Promise<void> {
+  const { dataUrl } = await nodeToPng(summaryNode);
+  triggerDownload(dataUrl, `${slugify(nome, 'encontro')}.png`);
 }
 
 /**
