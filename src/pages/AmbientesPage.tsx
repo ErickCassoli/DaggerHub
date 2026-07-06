@@ -175,7 +175,11 @@ export function AmbientesPage() {
 
           {filtered.length === 0 ? (
             <div className="rounded-md border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-8 text-center">
-              <p className="text-ink/70">Nenhum ambiente encontrado.</p>
+              <p className="text-ink/70">
+                {query.trim()
+                  ? `Nenhum ambiente encontrado para "${query}".`
+                  : 'Nenhum ambiente corresponde aos filtros ativos.'}
+              </p>
               <button
                 onClick={() => { setQuery(''); setSelectedTipo(''); }}
                 className="mt-2 text-sm text-gold hover:underline"
