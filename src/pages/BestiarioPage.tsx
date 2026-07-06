@@ -41,7 +41,7 @@ function FilterChip({
       className={clsx(
         'rounded border px-2.5 py-0.5 text-sm font-semibold transition-colors',
         active
-          ? 'border-gold bg-gold/20 text-amber-800'
+          ? 'border-gold bg-gold/20 text-amber-800 dark:text-amber-400'
           : 'border-ink/30 bg-parchment text-ink/60 hover:border-gold/50 hover:text-ink/80',
       )}
     >
@@ -210,7 +210,7 @@ export function BestiarioPage() {
           className={clsx(
             'flex items-center gap-1.5 rounded border px-3 py-1 text-sm font-semibold transition-colors',
             showFavoritesOnly
-              ? 'border-gold bg-gold/20 text-amber-800'
+              ? 'border-gold bg-gold/20 text-amber-800 dark:text-amber-400'
               : 'border-ink/30 bg-parchment text-ink/60 hover:border-gold/50 hover:text-ink/80',
           )}
         >
@@ -240,7 +240,7 @@ export function BestiarioPage() {
           </p>
         </div>
       ) : results.length === 0 ? (
-        <div className="rounded-md border border-dashed border-ink/30 bg-white/40 p-8 text-center">
+        <div className="rounded-md border border-dashed border-ink/30 bg-white/40 dark:bg-white/5 p-8 text-center">
           {showFavoritesOnly && favorites.size === 0 ? (
             <>
               <p className="text-ink/70">Nenhum favorito salvo ainda.</p>
