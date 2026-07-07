@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import clsx from 'clsx';
 import { Button } from '@/components/ui/Button';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 export interface InstanceState {
   key: string;
@@ -101,46 +102,7 @@ export function SessionTrackerModal({
 }: SessionTrackerModalProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    const el = containerRef.current;
-    if (!el) return;
-
-    const getFocusable = () =>
-      Array.from(
-        el.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-        ),
-      ).filter((e) => !e.hasAttribute('disabled'));
-
-    getFocusable()[0]?.focus();
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onPause();
-        return;
-      }
-      if (e.key !== 'Tab') return;
-      const focusable = getFocusable();
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey) {
-        if (document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        }
-      } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    };
-
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [open, onPause]);
+  useFocusTrap(containerRef, open, onPause);
 
   if (!open) return null;
 
