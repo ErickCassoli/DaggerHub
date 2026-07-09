@@ -53,6 +53,7 @@ export function EncounterBuilderPage() {
 
   const [encounter, setEncounter] = useState<Encounter>(initial);
   const [lastSavedEncounter, setLastSavedEncounter] = useState<Encounter | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [sessionInstances, setSessionInstances] = useState<InstanceState[] | null>(null);
@@ -61,6 +62,7 @@ export function EncounterBuilderPage() {
 
   const summaryExportRef = useRef<HTMLDivElement>(null);
   const blockNodesRef = useRef<Map<string, HTMLDivElement>>(new Map());
+  const nomeInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (id && !get(id)) {
@@ -102,6 +104,13 @@ export function EncounterBuilderPage() {
   };
 
   const save = () => {
+    if (!encounter.nome.trim()) {
+      setSaveError('Não foi possível salvar — corrija os campos destacados.');
+      nomeInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      nomeInputRef.current?.focus();
+      return;
+    }
+    setSaveError(null);
     const saved = upsert(encounter);
     setEncounter(saved);
     setLastSavedEncounter(saved);
@@ -218,14 +227,26 @@ export function EncounterBuilderPage() {
         </p>
       ) : null}
 
+      {saveError ? (
+        <p className="mb-3 rounded border border-red-800/30 bg-red-50 px-3 py-2 text-sm text-red-900 dark:border-red-700/30 dark:bg-red-950 dark:text-red-200">
+          {saveError}
+        </p>
+      ) : null}
+
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[360px_minmax(0,1fr)]">
         <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
           <Section title="Identidade">
             <label className="block">
               <span className="field-label">Nome do encontro</span>
               <Input
+                ref={nomeInputRef}
                 value={encounter.nome}
-                onChange={(e) => setEncounter((p) => ({ ...p, nome: e.target.value }))}
+                onChange={(e) => {
+                  const nome = e.target.value;
+                  setEncounter((p) => ({ ...p, nome }));
+                  if (saveError && nome.trim()) setSaveError(null);
+                }}
+                hasError={!!saveError}
                 placeholder="Ex.: Emboscada na Floresta"
               />
             </label>
