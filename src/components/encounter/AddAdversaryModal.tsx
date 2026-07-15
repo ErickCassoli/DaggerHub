@@ -64,7 +64,10 @@ export function AddAdversaryModal({ open, biblioteca, onClose, onPick }: AddAdve
   const showTagFilter = allTags.length > 0 && origem !== 'bestiario';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 dark:bg-black/60 p-2 sm:p-4">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 dark:bg-black/60 p-2 sm:p-4"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
       <div
         ref={dialogRef}
         role="dialog"
